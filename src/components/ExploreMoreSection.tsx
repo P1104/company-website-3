@@ -1,33 +1,58 @@
 "use client"
 
-import { motion } from "framer-motion";
-import { useCallback } from "react";
+import { useState, useEffect } from "react";
 
-interface ExplorMoreSectionProps {
-  onExploreClick?: () => void;
-}
+export function ExploreMoreSection() {
+  const [showButton, setShowButton] = useState(false);
 
-export function ExploreMoreSection({ onExploreClick }: ExplorMoreSectionProps) {
-  const handleClick = useCallback(() => {
-    onExploreClick?.();
-  }, [onExploreClick]);
+  useEffect(() => {
+    const handleScroll = () => {
+      // Show button when the section is visible
+      const section = document.querySelector('[data-explore-more-section]');
+      
+      if (section) {
+        const rect = section.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+        
+        // Show when section is in viewport
+        if (rect.top < windowHeight && rect.bottom > 0) {
+          setShowButton(true);
+        } else {
+          setShowButton(false);
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Check initial state
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  const handleClick = () => {
+    // Trigger the navbar's mobile menu
+    const event = new CustomEvent('openMobileMenu');
+    window.dispatchEvent(event);
+  };
 
   return (
-    <motion.div
-      className="w-full py-12 px-6 text-center bg-gradient-to-b from-transparent via-blue-50/30 to-transparent md:hidden block"
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: false }}
-      transition={{ duration: 0.5 }}
-    >
-      <motion.button
-        onClick={handleClick}
-        className="px-6 py-3 text-base font-semibold text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition-all duration-200 rounded-full shadow-lg hover:shadow-xl hover:scale-105"
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-      >
-        Explore more →
-      </motion.button>
-    </motion.div>
+    <>
+      {/* Hidden marker section for visibility detection */}
+      <div data-explore-more-section className="h-0" />
+
+      {/* Fixed button - appears when marker is visible */}
+      {showButton && (
+        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 md:hidden">
+          <button
+            onClick={handleClick}
+            className="px-6 py-3 text-base font-semibold text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition-colors duration-200 rounded-full shadow-lg"
+          >
+            Explore more →
+          </button>
+        </div>
+      )}
+    </>
   );
 }

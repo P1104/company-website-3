@@ -62,27 +62,42 @@ export const Navbar = () => {
     setMounted(true);
     
     const handleScroll = () => {
-      if (window.scrollY > 50) {
+      if (window.scrollY > 10) {
         setIsScrolled(true);
       } else {
         setIsScrolled(false);
       }
 
-      // Show "Explore more" when user scrolls near bottom (adjust 1000 based on your page height)
-      const scrollHeight = document.documentElement.scrollHeight;
-      const scrollTop = window.scrollY;
-      const clientHeight = window.innerHeight;
+      // Show "Explore more" when ExploreMoreSection is visible
+      const exploreSections = document.querySelectorAll('[data-explore-more-section]');
       
-      // Show when within 300px of footer
-      if (scrollHeight - (scrollTop + clientHeight) < 300) {
-        setShowExploreMore(true);
-      } else {
-        setShowExploreMore(false);
+      if (exploreSections.length > 0) {
+        const section = exploreSections[0];
+        const rect = section.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+        
+        // Show when section is in viewport
+        if (rect.top < windowHeight && rect.bottom > 0) {
+          setShowExploreMore(true);
+        } else {
+          setShowExploreMore(false);
+        }
       }
     };
 
+    // Listen for custom event from ExploreMoreSection
+    const handleOpenMobileMenu = () => {
+      setIsMobileMenuOpen(true);
+    };
+
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('openMobileMenu', handleOpenMobileMenu);
+    handleScroll(); // Check initial state
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('openMobileMenu', handleOpenMobileMenu);
+    };
   }, []);
 
   useEffect(() => {
@@ -211,26 +226,6 @@ export const Navbar = () => {
         </motion.div>
       </motion.nav>
 
-      {/* Mobile - Explore More Text */}
-      <AnimatePresence>
-        {!isMobileMenuOpen && showExploreMore && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            transition={{ duration: 0.3 }}
-            className="fixed bottom-24 left-1/2 transform -translate-x-1/2 z-50 md:hidden pointer-events-auto"
-          >
-            <button
-              onClick={() => setIsMobileMenuOpen(true)}
-              className="px-4 py-2 text-sm text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition-colors duration-200 font-semibold tracking-wide rounded-full whitespace-nowrap shadow-lg"
-            >
-              Explore more →
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Mobile Navigation Button (Hidden until menu opens) */}
       <AnimatePresence>
         {isMobileMenuOpen && (
@@ -242,7 +237,7 @@ export const Navbar = () => {
           >
             <motion.button
               onClick={() => setIsMobileMenuOpen(false)}
-              className="p-3 bg-black/50 backdrop-blur-md rounded-full border border-white/10 shadow-lg text-white"
+              className="p-3 backdrop-blur-md rounded-full border border-white/10 shadow-lg text-white"
               whileTap={{ scale: 0.95 }}
             >
               <X size={20} />
@@ -258,12 +253,12 @@ export const Navbar = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.5 }}
             className="fixed inset-0 z-40 md:hidden"
           >
             {/* Backdrop */}
             <motion.div 
-              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              className="absolute inset-0  backdrop-blur-sm"
               onClick={() => setIsMobileMenuOpen(false)}
             />
             

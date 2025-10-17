@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   motion,
   useScroll,
@@ -253,9 +253,21 @@ const FeatureCard = ({
   isExpanded: boolean;
   onClick: () => void;
 }) => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const cardVariants: Variants = {
     collapsed: {
-      scale: 1,
+      height: isMobile ? 80 : 155,
       transition: {
         type: "spring",
         stiffness: 120,
@@ -263,12 +275,23 @@ const FeatureCard = ({
       }
     },
     expanded: {
-      scale: 1.02,
+      height: isMobile ? 280 : 570,
       transition: {
         type: "spring",
         stiffness: 120,
         damping: 25,
       }
+    }
+  };
+
+  const titleVariants: Variants = {
+    collapsed: { 
+      y: 0,
+      transition: { duration: 0.4 }
+    },
+    expanded: { 
+      y: isMobile ? 0 : -10,
+      transition: { duration: 0.4 }
     }
   };
 
@@ -279,15 +302,15 @@ const FeatureCard = ({
       transition: { duration: 0.4 }
     },
     expanded: {
-      scale: 1.3,
-      rotate: 12,
+      scale: isMobile ? 1.1 : 1.3,
+      rotate: isMobile ? 8 : 12,
       transition: { duration: 0.4 }
     }
   };
 
   return (
     <motion.div
-      className="relative rounded-3xl bg-white/96 backdrop-blur-lg border border-gray-200/60 shadow-2xl cursor-pointer group"
+      className="relative overflow-hidden rounded-3xl bg-white/96 backdrop-blur-lg border border-gray-200/60 shadow-2xl cursor-pointer group"
       variants={cardVariants}
       initial="collapsed"
       animate={isExpanded ? "expanded" : "collapsed"}
@@ -297,16 +320,13 @@ const FeatureCard = ({
         scale: isExpanded ? 1.01 : 1.03,
         transition: { duration: 0.4 }
       }}
-      whileTap={{ scale: 0.98 }}
       style={{
         perspective: "1000px",
-        transformStyle: "preserve-3d",
-        position: "relative",
-        zIndex: isExpanded ? 50 : 10,
+        transformStyle: "preserve-3d"
       }}
     >
       <motion.div 
-        className="absolute inset-0 rounded-3xl pointer-events-none"
+        className="absolute inset-0 rounded-3xl"
         style={{
           background: isExpanded 
             ? "linear-gradient(135deg, #3b82f6 0%, #8b5cf6 25%, #06b6d4 50%, #10b981 75%, #f59e0b 100%)" 
@@ -325,7 +345,7 @@ const FeatureCard = ({
       />
       
       <motion.div 
-        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent rounded-3xl pointer-events-none"
+        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent rounded-3xl"
         animate={{
           x: ["-120%", "120%"],
           opacity: isExpanded ? [0, 0.6, 0] : [0, 0.3, 0]
@@ -339,7 +359,7 @@ const FeatureCard = ({
       />
 
       <motion.div
-        className="absolute inset-0 rounded-3xl border-2 border-transparent pointer-events-none"
+        className="absolute inset-0 rounded-3xl border-2 border-transparent"
         style={{
           background: `linear-gradient(45deg, transparent, ${isExpanded ? 'rgba(59, 130, 246, 0.3)' : 'rgba(59, 130, 246, 0.1)'}, transparent)`,
           mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
@@ -355,17 +375,17 @@ const FeatureCard = ({
         }}
       />
 
-      <div className="relative z-20 p-6 flex flex-col min-h-[200px]">
+      <div className="relative z-10 h-full p-4 sm:p-6 md:p-8 lg:p-10 flex flex-col">
         <motion.div 
-          className="flex items-center gap-4 mb-4"
+          className="flex items-center gap-3 sm:gap-4 md:gap-6 mb-2 sm:mb-3 md:mb-4"
+          variants={titleVariants}
         >
           <motion.div
-            className="flex-shrink-0 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-100 to-blue-50 text-blue-600 relative overflow-hidden shadow-lg"
+            className="flex-shrink-0 inline-flex h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 lg:h-16 lg:w-16 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br from-blue-100 to-blue-50 text-blue-600 relative overflow-hidden shadow-lg"
             variants={iconVariants}
-            animate={isExpanded ? "expanded" : "collapsed"}
           >
             <motion.div
-              className="absolute inset-0 rounded-2xl bg-blue-200 pointer-events-none"
+              className="absolute inset-0 rounded-xl sm:rounded-2xl bg-blue-200"
               animate={{
                 scale: [1, 1.4, 1],
                 opacity: [0, 0.4, 0],
@@ -376,11 +396,11 @@ const FeatureCard = ({
                 delay: index * 0.5,
               }}
             />
-            <feature.icon className="h-8 w-8 relative z-10" strokeWidth={1.5} />
+            <feature.icon className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7 lg:h-8 lg:w-8 relative z-10" strokeWidth={1.5} />
           </motion.div>
           
           <motion.h3
-            className="text-2xl font-bold text-gray-900 leading-tight"
+            className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-900 leading-tight"
             whileHover={{
               color: "#3b82f6",
               transition: { duration: 0.2 }
@@ -390,49 +410,77 @@ const FeatureCard = ({
           </motion.h3>
         </motion.div>
 
-        <div className="flex-1 flex flex-col justify-center">
-          <AnimatePresence mode="wait">
-            {!isExpanded ? (
-              <motion.div
-                key="hint"
-                className="flex items-center justify-center py-4"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.3 }}
-              >
-                <motion.p 
-                  className="text-gray-500 text-base italic"
-                  animate={{
-                    opacity: [0.6, 1, 0.6],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                >
-                  Click to expand
-                </motion.p>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="description"
-                className="py-2"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4 }}
-              >
+        <AnimatePresence>
+          {isExpanded && (
+            <motion.div
+              className="flex-1 flex flex-col justify-center py-2 sm:py-3 md:py-4 lg:py-6"
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              animate={{ 
+                opacity: 1, 
+                y: 0,
+                scale: 1,
+                transition: { 
+                  delay: 0.15,
+                  duration: 0.6,
+                  ease: "easeOut"
+                }
+              }}
+              exit={{ 
+                opacity: 0, 
+                y: 20,
+                scale: 0.95,
+                transition: { 
+                  duration: 0.3 
+                }
+              }}
+            >
+              <div className="">
                 <motion.p
-                  className="text-gray-700 leading-relaxed text-lg font-light"
+                  className="text-gray-700 leading-relaxed text-sm sm:text-base md:text-lg lg:text-xl font-light"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3, duration: 0.5 }}
                 >
                   {feature.description}
                 </motion.p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+                
+                  {/* <motion.div
+                    className="mt-4 sm:mt-6"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5, duration: 0.4 }}
+                  >
+                    <motion.button
+                      className="group px-6 py-2 sm:px-8 sm:py-3 md:px-10 md:py-4 bg-gradient-to-r from-blue-600 via-blue-700 to-purple-700 text-white rounded-xl sm:rounded-2xl text-sm sm:text-base md:text-lg font-semibold inline-flex items-center gap-2 sm:gap-3 shadow-xl relative overflow-hidden"
+                      whileHover={{ 
+                        scale: 1.05,
+                        boxShadow: "0 15px 35px -5px rgba(59, 130, 246, 0.5)",
+                        transition: { duration: 0.2 }
+                      }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <motion.div
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                        animate={{ x: ["-100%", "100%"] }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          repeatDelay: 3
+                        }}
+                      />
+                      <span className="relative z-10">Learn more</span>
+                      <motion.div
+                        animate={{ x: [0, 4, 0] }}
+                        transition={{ duration: 1.5, repeat: Infinity }}
+                      >
+                        <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 relative z-10" />
+                      </motion.div>
+                    </motion.button>
+                  </motion.div> */}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </motion.div>
   );
@@ -479,11 +527,11 @@ export const HeroSectionFour: React.FC = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.7 }}
-      className="relative overflow-hidden bg-gradient-to-b from-gray-50 to-white py-20"
+      className="relative overflow-hidden"
       style={{ y }}
     >
       <motion.div
-        className="absolute inset-0 opacity-30 pointer-events-none"
+        className="absolute inset-0 opacity-30"
         initial={{ opacity: 0 }}
         animate={{ opacity: 0.3 }}
         transition={{ duration: 2 }}
@@ -509,7 +557,7 @@ export const HeroSectionFour: React.FC = () => {
         ))}
       </motion.div>
 
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      <div className="absolute inset-0 overflow-hidden">
         {Array.from({ length: 30 }).map((_, i) => (
           <motion.div
             key={i}
@@ -564,18 +612,18 @@ export const HeroSectionFour: React.FC = () => {
       </div>
 
       <motion.div
-        className="relative z-30 container mx-auto px-4 sm:px-6 lg:px-8"
+        className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16"
         initial="hidden"
         animate="visible"
         variants={containerVariants}
       >
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center mb-8 sm:mb-12 md:mb-16">
           <motion.div
             className="text-center lg:text-left order-2 lg:order-1"
             variants={containerVariants}
           >
             <motion.h1
-              className="text-5xl xl:text-6xl font-bold text-gray-900 mb-6 leading-tight"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 mb-3 sm:mb-4 md:mb-6 leading-tight"
               variants={itemVariants}
             >
               {["What", "Do", "We", "Do", "?"].map((word, index) => (
@@ -583,7 +631,7 @@ export const HeroSectionFour: React.FC = () => {
                   key={index}
                   custom={index}
                   variants={wordVariants}
-                  className="inline-block mr-2"
+                  className="inline-block mr-1 sm:mr-2"
                   whileHover={{
                     scale: 1.05,
                     color: "#3b82f6",
@@ -596,7 +644,7 @@ export const HeroSectionFour: React.FC = () => {
             </motion.h1>
 
             <motion.p
-              className="text-lg text-gray-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed mb-8"
+              className="text-sm sm:text-base md:text-lg text-gray-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed mb-4 sm:mb-6 md:mb-8"
               variants={itemVariants}
               whileHover={{
                 scale: 1.02,
@@ -635,7 +683,7 @@ export const HeroSectionFour: React.FC = () => {
               <RobotImage />
               
               <motion.div
-                className="absolute -bottom-4 -right-4 sm:-bottom-6 sm:-right-6 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-gradient-to-br from-purple-400/30 to-pink-500/30 rounded-full blur-2xl pointer-events-none"
+                className="absolute -bottom-4 -right-4 sm:-bottom-6 sm:-right-6 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-gradient-to-br from-purple-400/30 to-pink-500/30 rounded-full blur-2xl"
                 animate={{ 
                   scale: [1, 1.3, 1],
                   rotate: [0, 180, 360],
@@ -652,7 +700,7 @@ export const HeroSectionFour: React.FC = () => {
         </div>
 
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-none"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-none"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-10px" }}
