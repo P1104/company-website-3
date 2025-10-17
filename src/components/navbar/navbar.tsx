@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Home, Zap, CreditCard, Package, Mail, X } from "lucide-react";
+import { Home, Zap, CreditCard, Package, Mail, X, Menu } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -20,8 +20,6 @@ export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [expandedSubMenu, setExpandedSubMenu] = useState<string | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [showExploreMore, setShowExploreMore] = useState(false);
 
   const navItems: NavItem[] = [
     {
@@ -68,38 +66,13 @@ export const Navbar = () => {
       } else {
         setIsScrolled(false);
       }
-
-      // Show "Explore more" when ExploreMoreSection is visible
-      const exploreSections = document.querySelectorAll(
-        "[data-explore-more-section]"
-      );
-
-      if (exploreSections.length > 0) {
-        const section = exploreSections[0];
-        const rect = section.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-
-        // Show when section is in viewport
-        if (rect.top < windowHeight && rect.bottom > 0) {
-          setShowExploreMore(true);
-        } else {
-          setShowExploreMore(false);
-        }
-      }
-    };
-
-    // Listen for custom event from ExploreMoreSection
-    const handleOpenMobileMenu = () => {
-      setIsMobileMenuOpen(true);
     };
 
     window.addEventListener("scroll", handleScroll);
-    window.addEventListener("openMobileMenu", handleOpenMobileMenu);
-    handleScroll(); // Check initial state
+    handleScroll();
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("openMobileMenu", handleOpenMobileMenu);
     };
   }, []);
 
@@ -229,25 +202,17 @@ export const Navbar = () => {
         </motion.div>
       </motion.nav>
 
-      {/* Mobile Navigation Button (Hidden until menu opens) */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.nav
-            className="fixed top-4 right-4 z-50 md:hidden"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.3 }}
-          >
-            <motion.button
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="p-3 backdrop-blur-md rounded-full border border-white/10 shadow-lg text-white"
-              whileTap={{ scale: 0.95 }}
-            >
-              <X size={20} />
-            </motion.button>
-          </motion.nav>
-        )}
-      </AnimatePresence>
+      {/* Mobile Hamburger Button - Always visible on mobile */}
+      <motion.button
+        onClick={() => setIsMobileMenuOpen(true)}
+        className="fixed top-4 right-4 z-50 md:hidden p-3 bg-black  backdrop-blur-md rounded-full border border-white/10 shadow-lg text-white hover:bg-white/5 transition-colors"
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.3 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <Menu size={20} />
+      </motion.button>
 
       {/* Mobile Menu Overlay */}
       <AnimatePresence>
@@ -261,7 +226,7 @@ export const Navbar = () => {
           >
             {/* Backdrop */}
             <motion.div
-              className="absolute inset-0  backdrop-blur-sm"
+              className="absolute inset-0 backdrop-blur-sm"
               onClick={() => setIsMobileMenuOpen(false)}
             />
 
@@ -376,38 +341,6 @@ export const Navbar = () => {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Explore More Floating Button */}
-      {/* <AnimatePresence>
-        {showExploreMore && (
-          <motion.button
-            key="explore-more-btn"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 40 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-            className="fixed bottom-8 right-8 bg-blue-600 text-white px-5 py-3 rounded-full shadow-lg z-[60] 
-                 hover:bg-blue-700 active:scale-95 transition-all flex items-center gap-2"
-            onClick={() =>
-              document
-                .querySelector("[data-explore-more-section]")
-                ?.scrollIntoView({ behavior: "smooth" })
-            }
-          >
-            <span className="font-medium">Explore More</span>
-            <motion.span
-              animate={{ y: [0, 4, 0] }}
-              transition={{
-                repeat: Infinity,
-                duration: 1.2,
-                ease: "easeInOut",
-              }}
-            >
-              ↓
-            </motion.span>
-          </motion.button>
-        )}
-      </AnimatePresence> */}
     </>
   );
 };
