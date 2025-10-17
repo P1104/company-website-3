@@ -1,0 +1,11 @@
+# Use LF for all text files
+* text=auto
+
+# Force LF for .gitignore
+.gitignore text eol=lf
+
+# Force LF for shell scripts
+*.sh text eol=lf
+
+# Force CRLF for Windows batch scripts (if needed)
+*.bat text eol=crlf

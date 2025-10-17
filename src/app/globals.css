@@ -1,0 +1,307 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+.theme-custom {
+  --gradient: #003950;
+  --radius: 0.5rem;
+  --background: oklch(0.97 0.004 220);
+
+  --foreground: oklch(65.487% 0.09727 195.084);
+  --card: oklch(99.405% 0.00011 271.152);
+  --card-foreground: oklch(54.986% 0.1061 309.433);
+  --popover: oklch(0.94 0.01 220);
+  --popover-foreground: oklch(0.1 0.005 220);
+  --primary: oklch(52.934% 0.04611 298.998);
+  --primary-foreground: oklch(0.98 0.003 220);
+  --secondary: oklch(0.96 0.01 220);
+  --secondary-foreground: oklch(0.18 0.02 220);
+  --muted: oklch(0.96 0.01 220);
+  --muted-foreground: oklch(0.45 0.02 220);
+  --accent: oklch(0.65 0.12 190);
+  --accent-foreground: oklch(0.98 0.003 220);
+  --destructive: oklch(0.65 0.18 27);
+  --destructive-foreground: oklch(0.98 0.003 220);
+  --border: oklch(0.9 0.01 220);
+  --input: oklch(0.9 0.01 220);
+  --ring: oklch(0.55 0.17 200);
+  --chart-1: oklch(0.55 0.17 200);
+  --chart-2: oklch(0.6 0.14 170);
+  --chart-3: oklch(0.5 0.2 190);
+  --chart-4: oklch(0.65 0.13 210);
+  --chart-5: oklch(0.45 0.15 180);
+  --sidebar: oklch(0.94 0.01 220);
+  --sidebar-foreground: oklch(0.1 0.005 220);
+  --sidebar-primary: oklch(0.55 0.17 200);
+  --sidebar-primary-foreground: oklch(0.98 0.003 220);
+  --sidebar-accent: oklch(0.65 0.12 190);
+  --sidebar-accent-foreground: oklch(0.98 0.003 220);
+  --sidebar-border: oklch(0.9 0.01 220);
+  --sidebar-ring: oklch(0.55 0.17 200);
+}
+
+/* Custom styling for expandable chat close button */
+.theme-custom button[aria-label*="close"],
+.theme-custom button[aria-label*="Close"],
+.theme-custom [data-state="open"] button:has(svg[stroke-width="2"]),
+.theme-custom button:has(svg[data-lucide="x"]),
+.theme-custom button:has(svg[class*="lucide-x"]) {
+  background-color: var(--primary) !important;
+  color: var(--primary-foreground) !important;
+  border: none !important;
+}
+
+.theme-custom button[aria-label*="close"]:hover,
+.theme-custom button[aria-label*="Close"]:hover,
+.theme-custom [data-state="open"] button:has(svg[stroke-width="2"]):hover,
+.theme-custom button:has(svg[data-lucide="x"]):hover,
+.theme-custom button:has(svg[class*="lucide-x"]):hover {
+  background-color: var(--primary) !important;
+  opacity: 0.9 !important;
+  color: var(--primary-foreground) !important;
+}
+
+/* More specific targeting for the close button icon */
+.theme-custom button svg[stroke-width="2"] {
+  color: var(--primary-foreground) !important;
+  stroke: var(--primary-foreground) !important;
+}
+
+/* ===== HERO-THEMED CHATBOT STYLES ===== */
+.hero-themed-chat {
+  /* Hero-inspired theme colors */
+  --hero-background: rgba(248, 250, 252, 0.95);
+  --hero-foreground: #1e293b;
+  --hero-card: rgba(255, 255, 255, 0.8);
+  --hero-card-foreground: #334155;
+  --hero-muted: rgba(241, 245, 249, 0.9);
+  --hero-muted-foreground: #64748b;
+  --hero-primary-gradient: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  --hero-primary-gradient-hover: linear-gradient(135deg, #2563eb, #7c3aed);
+  --hero-primary-foreground: #ffffff;
+  --hero-border: rgba(226, 232, 240, 0.6);
+  --hero-input: rgba(226, 232, 240, 0.4);
+  --hero-ring: rgba(59, 130, 246, 0.3);
+}
+
+.hero-themed-chat .chat-container {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.hero-themed-chat .chat-header {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+  border-bottom: 1px solid rgba(226, 232, 240, 0.3);
+}
+
+.hero-themed-chat .chat-body {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.hero-themed-chat .chat-footer {
+  background: rgba(255, 255, 255, 0.6);
+  border-top: 1px solid rgba(226, 232, 240, 0.3);
+}
+
+.hero-themed-chat .primary-button {
+  background: var(--hero-primary-gradient);
+  color: white;
+  border: none;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.hero-themed-chat .primary-button:hover {
+  background: var(--hero-primary-gradient-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.15);
+}
+
+.hero-themed-chat .user-message {
+  background: var(--hero-primary-gradient);
+  color: white;
+  border-radius: 18px 18px 4px 18px;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+}
+
+.hero-themed-chat .ai-message {
+  background: rgba(248, 250, 252, 0.9);
+  color: #334155;
+  border-radius: 18px 18px 18px 4px;
+  border: 1px solid rgba(226, 232, 240, 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.hero-themed-chat .input-container {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(226, 232, 240, 0.4);
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.hero-themed-chat .input-container:focus-within {
+  border-color: rgba(59, 130, 246, 0.5);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.hero-themed-chat .ghost-button {
+  color: #64748b;
+  transition: all 0.2s ease;
+  border-radius: 0.5rem;
+}
+
+.hero-themed-chat .ghost-button:hover {
+  background: rgba(241, 245, 249, 0.8);
+  color: #334155;
+}
+
+/* Bot icon with gradient */
+.hero-themed-chat .bot-icon {
+  background: var(--hero-primary-gradient);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  transition: all 0.3s ease;
+}
+
+.hero-themed-chat .bot-icon:hover {
+  background: var(--hero-primary-gradient-hover);
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+}
+
+/* Close button styling for hero theme */
+.hero-themed-chat [role="button"]:has(svg[stroke-width="2"]),
+.hero-themed-chat button:has(svg[data-lucide="x"]),
+.hero-themed-chat button:has(svg[class*="lucide-x"]) {
+  background: var(--hero-primary-gradient) !important;
+  color: white !important;
+  border: none !important;
+}
+
+.hero-themed-chat [role="button"]:has(svg[stroke-width="2"]):hover,
+.hero-themed-chat button:has(svg[data-lucide="x"]):hover,
+.hero-themed-chat button:has(svg[class*="lucide-x"]):hover {
+  background: var(--hero-primary-gradient-hover) !important;
+  opacity: 1 !important;
+  transform: scale(1.02);
+}
+
+/* Input field styling */
+.hero-themed-chat input[type="text"],
+.hero-themed-chat textarea {
+  background: transparent;
+  color: #334155;
+}
+
+.hero-themed-chat input[type="text"]::placeholder,
+.hero-themed-chat textarea::placeholder {
+  color: #94a3b8;
+}
+
+/* Message list styling */
+.hero-themed-chat .chat-message-list {
+  background: transparent;
+}
+
+/* Scrollbar styling for hero theme */
+.hero-themed-chat *::-webkit-scrollbar {
+  width: 6px;
+}
+
+.hero-themed-chat *::-webkit-scrollbar-track {
+  background: rgba(241, 245, 249, 0.3);
+  border-radius: 3px;
+}
+
+.hero-themed-chat *::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.5);
+  border-radius: 3px;
+}
+
+.hero-themed-chat *::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.8);
+}
+
+/* Animation for message appearance */
+.hero-themed-chat .chat-bubble {
+  animation: messageSlideIn 0.3s ease-out;
+}
+
+@keyframes messageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Loading message animation */
+.hero-themed-chat .loading-message {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+  
+  /* Dark mode adjustments for hero theme */
+  .hero-themed-chat {
+    --hero-background: rgba(15, 23, 42, 0.95);
+    --hero-foreground: #e2e8f0;
+    --hero-card: rgba(30, 41, 59, 0.8);
+    --hero-card-foreground: #cbd5e1;
+    --hero-muted: rgba(51, 65, 85, 0.9);
+    --hero-muted-foreground: #94a3b8;
+  }
+  
+  .hero-themed-chat .chat-container {
+    background: rgba(30, 41, 59, 0.85);
+    border: 1px solid rgba(51, 65, 85, 0.3);
+  }
+  
+  .hero-themed-chat .ai-message {
+    background: rgba(51, 65, 85, 0.6);
+    color: #cbd5e1;
+    border: 1px solid rgba(71, 85, 105, 0.3);
+  }
+  
+  .hero-themed-chat .input-container {
+    background: rgba(51, 65, 85, 0.6);
+    border: 1px solid rgba(71, 85, 105, 0.4);
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
