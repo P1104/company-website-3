@@ -20,6 +20,7 @@ export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [expandedSubMenu, setExpandedSubMenu] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [showExploreMore, setShowExploreMore] = useState(false);
 
   const navItems: NavItem[] = [
@@ -377,7 +378,7 @@ export const Navbar = () => {
       </AnimatePresence>
 
       {/* Explore More Floating Button */}
-      <AnimatePresence>
+      {/* <AnimatePresence>
         {showExploreMore && (
           <motion.button
             key="explore-more-btn"
@@ -406,7 +407,7 @@ export const Navbar = () => {
             </motion.span>
           </motion.button>
         )}
-      </AnimatePresence>
+      </AnimatePresence> */}
     </>
   );
 };
