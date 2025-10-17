@@ -1,4 +1,13 @@
-export default function SuccessModal({ finalScore, finalCoins, onRestart, isMobile }) {
+// SuccessModal.tsx
+export default function SuccessModal({ finalScore, finalCoins, onRestart, onNavigateHome, isMobile }) {
+  const handlePlayAgain = () => {
+    onRestart();
+  };
+
+  const handleVisitHome = () => {
+    onNavigateHome();
+  };
+
   return (
     <div 
       style={{ 
@@ -32,8 +41,6 @@ export default function SuccessModal({ finalScore, finalCoins, onRestart, isMobi
           padding: '40px 35px',
           textAlign: 'center'
         }}>
-          {/* <div style={{ fontSize: '4rem', marginBottom: '16px' }}>🏆</div> */}
-          
           <div style={{
             background: 'linear-gradient(90deg, #10b981, #34d399, #6ee7b7)',
             WebkitBackgroundClip: 'text',
@@ -99,7 +106,7 @@ export default function SuccessModal({ finalScore, finalCoins, onRestart, isMobi
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <button
-              onClick={onRestart}
+              onClick={handlePlayAgain}
               style={{
                 width: '100%',
                 padding: '20px',
@@ -119,9 +126,8 @@ export default function SuccessModal({ finalScore, finalCoins, onRestart, isMobi
               🔄 PLAY AGAIN
             </button>
 
-            <a
-              href="https://equilibrateai.com/"
-              rel="noopener noreferrer"
+            <button
+              onClick={handleVisitHome}
               style={{
                 width: '100%',
                 padding: '20px',
@@ -142,7 +148,7 @@ export default function SuccessModal({ finalScore, finalCoins, onRestart, isMobi
               }}
             >
               🌐 Visit Equilibrate.AI
-            </a>
+            </button>
           </div>
         </div>
       </div>

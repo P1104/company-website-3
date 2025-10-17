@@ -2,7 +2,7 @@
 
 import React, { useState, useId, useEffect } from "react";
 import { motion, useAnimation, Variants } from "framer-motion";
-import { ArrowRight, Sparkles, Zap } from "lucide-react";
+import { ArrowRight,Zap } from "lucide-react";
 import Spline from "@splinetool/react-spline";
 import Link from "next/link";
 import Particles, { initParticlesEngine } from "@tsparticles/react";

@@ -2,8 +2,6 @@
 
 import React, { useRef, useEffect } from "react";
 import { motion, useAnimation, useInView, Variants } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
 import { Sparkles } from "@/components/ui/sparkles";
 
 interface HeaderSectionProps {
@@ -17,7 +15,6 @@ interface HeaderSectionProps {
 export const BlogSectionOne = ({
   heading = "Exploring the Cosmos of Technology",
   description = "Discover our latest articles on technology, design, and innovation under the starlit sky of knowledge.",
-  buttonText = "Start Reading",
 }: HeaderSectionProps) => {
   const containerRef = useRef(null);
   const isInView = useInView(containerRef, { once: true, amount: 0.2 });

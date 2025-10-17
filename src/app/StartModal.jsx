@@ -1,7 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+// StartModal.tsx
+export default function StartModal({ onStart, onNavigateHome, gameLoaded, isMobile }) {
+  const handleVisitHome = () => {
+    onNavigateHome();
+  };
 
-// StartModal Component
-export default function StartModal({ onStart, gameLoaded, isMobile }) {
   return (
     <div
       style={{
@@ -47,7 +49,7 @@ export default function StartModal({ onStart, gameLoaded, isMobile }) {
               fontWeight: "900",
               marginBottom: "18px",
               letterSpacing: "2px",
-              lineHeight: 1.1, 
+              lineHeight: 1.1,
               wordBreak: "break-word",
               animation: "titlePulse 2s ease-in-out infinite",
             }}
@@ -97,22 +99,9 @@ export default function StartModal({ onStart, gameLoaded, isMobile }) {
             >
               {gameLoaded ? "🚀 PLAY GAME" : "⏳ Loading Game..."}
             </button>
-            {/* 
-            <div
-              style={{
-                color: "#9ca3af",
-                fontSize: "0.9rem",
-                fontWeight: "600",
-                letterSpacing: "2px",
-                padding: "8px 0",
-              }}
-            >
-              OR
-            </div> */}
 
-            <a
-              href="https://equilibrateai.com/"
-              rel="noopener noreferrer"
+            <button
+              onClick={handleVisitHome}
               style={{
                 color: "#60a5fa",
                 fontSize: isMobile ? "1rem" : "1.1rem",
@@ -122,13 +111,18 @@ export default function StartModal({ onStart, gameLoaded, isMobile }) {
                 textDecoration: "underline",
                 textAlign: "center",
                 display: "block",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                width: "100%",
+                padding: "8px 0",
                 transition: "color 0.3s ease",
               }}
-              onMouseOver={(e) => (e.target.style.color = "#93c5fd")}
-              onMouseOut={(e) => (e.target.style.color = "#60a5fa")}
+              onMouseOver={(e) => (e.currentTarget.style.color = "#93c5fd")}
+              onMouseOut={(e) => (e.currentTarget.style.color = "#60a5fa")}
             >
               🌐 Visit Equilibrate.AI
-            </a>
+            </button>
           </div>
         </div>
       </div>

@@ -1,22 +1,24 @@
+// MarioGamePage.tsx - Add this import at the top
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import StartModal from "./StartModal";
 import GameOverModal from "./GameOverModal";
 import CountdownModal from "./CountdownModal";
 import SuccessModal from "./SuccessModal";
 
-
 let gameInitialized = false;
 
 export default function MarioGamePage() {
+  const router = useRouter();
   const containerRef = useRef(null);
   const [isMobile, setIsMobile] = useState(false);
   const [gameState, setGameState] = useState("start");
-  const [character, setCharacter] = useState("mario");
-  const [difficulty, setDifficulty] = useState("normal");
+  const [character] = useState("mario");
+  const [difficulty] = useState("normal");
   const [score, setScore] = useState(0);
-  const [coins, setCoins] = useState(0);
+  const [ setCoins] = useState(0);
   const [finalScore, setFinalScore] = useState(0);
   const [finalCoins, setFinalCoins] = useState(0);
   const [gameLoaded, setGameLoaded] = useState(false);
@@ -146,7 +148,7 @@ export default function MarioGamePage() {
       window.removeEventListener("levelComplete", handleLevelComplete);
       window.removeEventListener("gameLoaded", handleGameLoaded);
     };
-  }, []);
+  }, [setCoins]);
 
   useEffect(() => {
     if (gameInitialized) {
@@ -289,6 +291,14 @@ export default function MarioGamePage() {
     setFinalScore(0);
     setFinalCoins(0);
     setGameState("countdown");
+  };
+
+  const handleNavigateHome = () => {
+    console.log("🏠 Navigating to home");
+    if (window.gameInstance?._raf) {
+      cancelAnimationFrame(window.gameInstance._raf);
+    }
+    router.push("/home");
   };
 
   const setMobileInput = (key, value) => {
@@ -491,6 +501,7 @@ export default function MarioGamePage() {
         {gameState === "start" && (
           <StartModal
             onStart={handleStart}
+            onNavigateHome={handleNavigateHome}
             gameLoaded={gameLoaded}
             isMobile={isMobile}
           />
@@ -508,6 +519,7 @@ export default function MarioGamePage() {
             finalScore={finalScore}
             finalCoins={finalCoins}
             onRestart={handleRestart}
+            onNavigateHome={handleNavigateHome}
             isMobile={isMobile}
           />
         )}
@@ -517,6 +529,7 @@ export default function MarioGamePage() {
             finalScore={finalScore}
             finalCoins={finalCoins}
             onRestart={handleRestart}
+            onNavigateHome={handleNavigateHome}
             isMobile={isMobile}
           />
         )}

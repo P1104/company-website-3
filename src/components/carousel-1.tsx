@@ -1,4 +1,5 @@
 import { Carousel } from "@ark-ui/react/carousel";
+import Image from "next/image";
 
 export default function BasicCarousel() {
   const images = Array.from(
@@ -24,7 +25,9 @@ export default function BasicCarousel() {
       <Carousel.ItemGroup className="overflow-hidden rounded-lg">
         {images.map((image, index) => (
           <Carousel.Item key={index} index={index}>
-            <img
+            <Image
+              width={100}
+              height={100}
               src={image}
               alt={`Slide ${index + 1}`}
               className="w-full h-64 object-cover"

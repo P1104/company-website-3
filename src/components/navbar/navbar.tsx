@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -60,7 +60,7 @@ export const Navbar = () => {
 
   useEffect(() => {
     setMounted(true);
-    
+
     const handleScroll = () => {
       if (window.scrollY > 10) {
         setIsScrolled(true);
@@ -69,13 +69,15 @@ export const Navbar = () => {
       }
 
       // Show "Explore more" when ExploreMoreSection is visible
-      const exploreSections = document.querySelectorAll('[data-explore-more-section]');
-      
+      const exploreSections = document.querySelectorAll(
+        "[data-explore-more-section]"
+      );
+
       if (exploreSections.length > 0) {
         const section = exploreSections[0];
         const rect = section.getBoundingClientRect();
         const windowHeight = window.innerHeight;
-        
+
         // Show when section is in viewport
         if (rect.top < windowHeight && rect.bottom > 0) {
           setShowExploreMore(true);
@@ -90,25 +92,25 @@ export const Navbar = () => {
       setIsMobileMenuOpen(true);
     };
 
-    window.addEventListener('scroll', handleScroll);
-    window.addEventListener('openMobileMenu', handleOpenMobileMenu);
+    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("openMobileMenu", handleOpenMobileMenu);
     handleScroll(); // Check initial state
-    
+
     return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('openMobileMenu', handleOpenMobileMenu);
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("openMobileMenu", handleOpenMobileMenu);
     };
   }, []);
 
   useEffect(() => {
     if (isMobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     }
-    
+
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     };
   }, [isMobileMenuOpen]);
 
@@ -127,13 +129,13 @@ export const Navbar = () => {
   return (
     <>
       {/* Desktop Navigation */}
-      <motion.nav 
+      <motion.nav
         className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 hidden md:block"
         initial={{ y: -20, opacity: 0 }}
-        animate={{ 
-          y: 0, 
+        animate={{
+          y: 0,
           opacity: 1,
-          top: isScrolled ? "1rem" : "1.5rem"
+          top: isScrolled ? "1rem" : "1.5rem",
         }}
         transition={{
           type: "spring",
@@ -141,11 +143,11 @@ export const Navbar = () => {
           damping: 20,
         }}
       >
-        <motion.div 
+        <motion.div
           className="flex items-center gap-1 bg-black/50 backdrop-blur-md py-2 px-2 rounded-full border border-white/10 shadow-lg"
           animate={{
             scale: isScrolled ? 0.95 : 1,
-            opacity: isScrolled ? 0.95 : 1
+            opacity: isScrolled ? 0.95 : 1,
           }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
         >
@@ -155,7 +157,7 @@ export const Navbar = () => {
             const hasDropdown = item.subItems && item.subItems.length > 0;
 
             return (
-              <div 
+              <div
                 key={item.name}
                 className="relative"
                 onMouseEnter={() => setHoveredTab(item.name)}
@@ -229,7 +231,7 @@ export const Navbar = () => {
       {/* Mobile Navigation Button (Hidden until menu opens) */}
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <motion.nav 
+          <motion.nav
             className="fixed top-4 right-4 z-50 md:hidden"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -257,11 +259,11 @@ export const Navbar = () => {
             className="fixed inset-0 z-40 md:hidden"
           >
             {/* Backdrop */}
-            <motion.div 
+            <motion.div
               className="absolute inset-0  backdrop-blur-sm"
               onClick={() => setIsMobileMenuOpen(false)}
             />
-            
+
             {/* Menu Content */}
             <motion.div
               initial={{ x: "100%" }}
@@ -289,7 +291,8 @@ export const Navbar = () => {
                   {navItems.map((item) => {
                     const Icon = item.icon;
                     const isActive = activeTab === item.name;
-                    const hasSubItems = item.subItems && item.subItems.length > 0;
+                    const hasSubItems =
+                      item.subItems && item.subItems.length > 0;
                     const isExpanded = expandedSubMenu === item.name;
 
                     return (
@@ -352,7 +355,9 @@ export const Navbar = () => {
                                 <Link
                                   key={subItem.name}
                                   href={subItem.url}
-                                  onClick={() => handleMobileItemClick(item.name)}
+                                  onClick={() =>
+                                    handleMobileItemClick(item.name)
+                                  }
                                   className="block px-12 py-3 text-white/70 hover:text-white hover:bg-white/5 transition-colors"
                                 >
                                   {subItem.name}
@@ -368,6 +373,38 @@ export const Navbar = () => {
               </div>
             </motion.div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Explore More Floating Button */}
+      <AnimatePresence>
+        {showExploreMore && (
+          <motion.button
+            key="explore-more-btn"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 40 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="fixed bottom-8 right-8 bg-blue-600 text-white px-5 py-3 rounded-full shadow-lg z-[60] 
+                 hover:bg-blue-700 active:scale-95 transition-all flex items-center gap-2"
+            onClick={() =>
+              document
+                .querySelector("[data-explore-more-section]")
+                ?.scrollIntoView({ behavior: "smooth" })
+            }
+          >
+            <span className="font-medium">Explore More</span>
+            <motion.span
+              animate={{ y: [0, 4, 0] }}
+              transition={{
+                repeat: Infinity,
+                duration: 1.2,
+                ease: "easeInOut",
+              }}
+            >
+              ↓
+            </motion.span>
+          </motion.button>
         )}
       </AnimatePresence>
     </>

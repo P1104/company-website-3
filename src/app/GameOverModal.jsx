@@ -1,4 +1,13 @@
-export default function GameOverModal({ finalScore, finalCoins, onRestart, isMobile }) {
+// GameOverModal.tsx
+export default function GameOverModal({ finalScore, finalCoins, onRestart, onNavigateHome, isMobile }) {
+  const handleTryAgain = () => {
+    onRestart();
+  };
+
+  const handleVisitHome = () => {
+    onNavigateHome();
+  };
+
   return (
     <div 
       style={{ 
@@ -32,8 +41,6 @@ export default function GameOverModal({ finalScore, finalCoins, onRestart, isMob
           padding: '40px 35px',
           textAlign: 'center'
         }}>
-          {/* <div style={{ fontSize: '4rem', marginBottom: '16px' }}>💀</div> */}
-          
           <div style={{
             background: 'linear-gradient(90deg, #ef4444, #f87171, #fca5a5)',
             WebkitBackgroundClip: 'text',
@@ -82,7 +89,7 @@ export default function GameOverModal({ finalScore, finalCoins, onRestart, isMob
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <button
-              onClick={onRestart}
+              onClick={handleTryAgain}
               style={{
                 width: '100%',
                 padding: '20px',
@@ -102,9 +109,8 @@ export default function GameOverModal({ finalScore, finalCoins, onRestart, isMob
               🔄 TRY AGAIN
             </button>
 
-            <a
-              href="https://equilibrateai.com/"
-              rel="noopener noreferrer"
+            <button
+              onClick={handleVisitHome}
               style={{
                 width: '100%',
                 padding: '20px',
@@ -125,7 +131,7 @@ export default function GameOverModal({ finalScore, finalCoins, onRestart, isMob
               }}
             >
               🌐 Visit Equilibrate.AI
-            </a>
+            </button>
           </div>
         </div>
       </div>

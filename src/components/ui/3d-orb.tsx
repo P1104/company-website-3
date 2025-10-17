@@ -2,11 +2,13 @@
 
 import { useEffect, useRef, useState } from "react"
 import * as THREE from "three"
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
+// ✅ Correct import
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { Color } from "three"
 
 export default function Globe() {
   const mountRef = useRef<HTMLDivElement>(null)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isHighResLoaded, setIsHighResLoaded] = useState(false)
   const [showHint, setShowHint] = useState(true)
 
@@ -221,12 +223,13 @@ export default function Globe() {
     return () => {
       window.removeEventListener("resize", handleResize)
       cancelAnimationFrame(animationId)
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       mountRef.current?.removeChild(renderer.domElement)
       controls.dispose()
       clearTimeout(hintTimer)
     }
   }, [])
-
+  
   return (
     <div ref={mountRef} className="fixed top-0 left-0 w-full h-full z-0">
       {showHint && (
