@@ -1,4 +1,4 @@
-// MarioGamePage.tsx - Add this import at the top
+// MarioGamePage.tsx - Complete code with Tech Summit Modal
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -7,6 +7,7 @@ import StartModal from "./StartModal";
 import GameOverModal from "./GameOverModal";
 import CountdownModal from "./CountdownModal";
 import SuccessModal from "./SuccessModal";
+import TechSummitModal from "./TechSummitModal";
 
 let gameInitialized = false;
 
@@ -18,10 +19,12 @@ export default function MarioGamePage() {
   const [character] = useState("mario");
   const [difficulty] = useState("normal");
   const [score, setScore] = useState(0);
-  const [ setCoins] = useState(0);
+  const [setCoins] = useState(0);
   const [finalScore, setFinalScore] = useState(0);
   const [finalCoins, setFinalCoins] = useState(0);
   const [gameLoaded, setGameLoaded] = useState(false);
+  const [showSummitModal, setShowSummitModal] = useState(false);
+  const [previousGameState, setPreviousGameState] = useState("start");
 
   useEffect(() => {
     const checkMobile = () => {
@@ -218,7 +221,7 @@ export default function MarioGamePage() {
 
       script.onload = () => {
         loadedCount++;
-        console.log(`✓ ${loadedCount}/${scripts.length}: ${scripts[index]}`);
+        console.log(`✔ ${loadedCount}/${scripts.length}: ${scripts[index]}`);
         loadNextScript(index + 1);
       };
 
@@ -294,11 +297,38 @@ export default function MarioGamePage() {
   };
 
   const handleNavigateHome = () => {
-    console.log("🏠 Navigating to home");
+    console.log("🏠 Opening Tech Summit Modal from state:", gameState);
+    
+    // Pause the game if it's running
     if (window.gameInstance?._raf) {
       cancelAnimationFrame(window.gameInstance._raf);
     }
-    router.push("/home");
+    
+    // Store the current state before opening modal
+    setPreviousGameState(gameState);
+    
+    // Open the modal
+    setShowSummitModal(true);
+    
+    console.log("✅ Tech Summit Modal should now be visible");
+  };
+
+  const handleSummitModalClose = () => {
+    console.log("❌ Closing Tech Summit Modal, returning to:", previousGameState);
+    setShowSummitModal(false);
+    // Don't navigate, just close the modal and stay on current state
+  };
+
+  const handleSummitModalNavigate = () => {
+    console.log("➡️ Navigating to home page - Current path:", window.location.pathname);
+    console.log("➡️ Router object:", router);
+    setShowSummitModal(false);
+    
+    // Small delay to ensure modal closes smoothly
+    setTimeout(() => {
+      console.log("➡️ Executing router.push('/')");
+      router.push("/home");
+    }, 100);
   };
 
   const setMobileInput = (key, value) => {
@@ -318,7 +348,7 @@ export default function MarioGamePage() {
     }
   };
 
-  console.log("🎨 Rendering with gameState:", gameState);
+  console.log("🎨 Rendering with gameState:", gameState, "showSummitModal:", showSummitModal);
 
   const showCanvas = gameState === "playing";
   const showHUD = gameState === "playing";
@@ -498,7 +528,7 @@ export default function MarioGamePage() {
           </div>
         )}
 
-        {gameState === "start" && (
+        {gameState === "start" && !showSummitModal && (
           <StartModal
             onStart={handleStart}
             onNavigateHome={handleNavigateHome}
@@ -507,14 +537,14 @@ export default function MarioGamePage() {
           />
         )}
 
-        {gameState === "countdown" && (
+        {gameState === "countdown" && !showSummitModal && (
           <CountdownModal
             onCountdownComplete={handleCountdownComplete}
             isMobile={isMobile}
           />
         )}
 
-        {gameState === "gameOver" && (
+        {gameState === "gameOver" && !showSummitModal && (
           <GameOverModal
             finalScore={finalScore}
             finalCoins={finalCoins}
@@ -524,7 +554,7 @@ export default function MarioGamePage() {
           />
         )}
 
-        {gameState === "success" && (
+        {gameState === "success" && !showSummitModal && (
           <SuccessModal
             finalScore={finalScore}
             finalCoins={finalCoins}
@@ -533,6 +563,13 @@ export default function MarioGamePage() {
             isMobile={isMobile}
           />
         )}
+
+        {/* Tech Summit Modal - renders on top of everything when open */}
+        <TechSummitModal
+          isOpen={showSummitModal}
+          onClose={handleSummitModalClose}
+          onNavigate={handleSummitModalNavigate}
+        />
 
         {showControls && (
           <>
