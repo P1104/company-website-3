@@ -128,10 +128,10 @@ export const HeroSectionThemeWrapper: React.FC<{ children: React.ReactNode }> = 
       )}
 
       {/* Gradient Overlay - Consistent with hero-section-one */}
-      <div className="absolute inset-0 z-0 bg-gradient-to-br from-blue-50/30 via-white/20 to-purple-50/30 pointer-events-none" />
+      <div className="absolute inset-0 z-0 bg-gradient-to-br from-blue-50/30 via-white/20 to-purple-50/30 pointer-events-none overflow-hidden" />
 
       {/* Content */}
-      <div className="relative z-10">{children}</div>
+      <div className="overflow-x-hidden">{children}</div>
     </div>
   );
 };

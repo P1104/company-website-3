@@ -1,26 +1,8 @@
 "use client";
 
-import React, { useId, useEffect, useState, useRef } from "react";
-import Particles, { initParticlesEngine } from "@tsparticles/react";
-import type { Container } from "@tsparticles/engine";
-import { loadSlim } from "@tsparticles/slim";
+import React, { useRef } from "react";
+import { motion, useInView, Variants } from "framer-motion";
 import {
-  motion,
-  useAnimation,
-  useInView,
-  Variants,
-} from "framer-motion";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  ArrowRight,
   Clock,
   Factory,
   Heart,
@@ -30,187 +12,6 @@ import {
   BarChart3,
 } from "lucide-react";
 import Image from "next/image";
-
-function cn(...classes: (string | undefined | null | false)[]): string {
-  return classes.filter(Boolean).join(" ");
-}
-
-type ParticlesProps = {
-  id?: string;
-  className?: string;
-  background?: string;
-  particleSize?: number;
-  minSize?: number;
-  maxSize?: number;
-  speed?: number;
-  particleColor?: string;
-  particleDensity?: number;
-};
-
-const Sparkles = React.memo((props: ParticlesProps) => {
-  const {
-    id,
-    className,
-    background,
-    minSize,
-    maxSize,
-    speed,
-    particleColor,
-    particleDensity,
-  } = props;
-  const [init, setInit] = useState(false);
-  const [isInitializing, setIsInitializing] = useState(false);
-
-  useEffect(() => {
-    if (isInitializing) return;
-
-    setIsInitializing(true);
-    initParticlesEngine(async (engine) => {
-      await loadSlim(engine);
-    }).then(() => {
-      setInit(true);
-      setIsInitializing(false);
-    });
-  }, [isInitializing]);
-
-  const controls = useAnimation();
-
-  const particlesLoaded = async (container?: Container) => {
-    if (container) {
-      controls.start({
-        opacity: 1,
-        transition: {
-          duration: 0.5,
-        },
-      });
-    }
-  };
-
-  const generatedId = useId();
-
-  const particleOptions = {
-    background: {
-      color: {
-        value: background || "transparent",
-      },
-    },
-    fullScreen: {
-      enable: false,
-      zIndex: 1,
-    },
-    fpsLimit: 60,
-    interactivity: {
-      events: {
-        onClick: {
-          enable: false,
-          mode: "push",
-        },
-        onHover: {
-          enable: false,
-          mode: "repulse",
-        },
-        resize: {
-          enable: true,
-        },
-      },
-    },
-    particles: {
-      color: {
-        value: particleColor || "#6366f1",
-      },
-      move: {
-        direction: "none" as const,
-        enable: true,
-        outModes: {
-          default: "out" as const,
-        },
-        random: false,
-        speed: {
-          min: 0.1,
-          max: speed || 0.5,
-        },
-        straight: false,
-      },
-      number: {
-        density: {
-          enable: true,
-          width: 800,
-          height: 600,
-        },
-        value: particleDensity || 30,
-      },
-      opacity: {
-        value: {
-          min: 0.1,
-          max: 0.3,
-        },
-        animation: {
-          enable: true,
-          speed: speed || 1,
-          sync: false,
-        },
-      },
-      shape: {
-        type: "circle",
-      },
-      size: {
-        value: {
-          min: minSize || 1,
-          max: maxSize || 2,
-        },
-      },
-    },
-    detectRetina: true,
-  };
-
-  return (
-    <motion.div animate={controls} className={cn("opacity-0", className)}>
-      {init && (
-        <Particles
-          id={id || generatedId}
-          className={cn("h-full w-full")}
-          particlesLoaded={particlesLoaded}
-          options={particleOptions}
-        />
-      )}
-    </motion.div>
-  );
-});
-
-Sparkles.displayName = "Sparkles";
-
-// Floating elements animation
-const FloatingElements = () => {
-  const floatingVariants: Variants = {
-    animate: {
-      y: [0, -20, 0],
-      rotate: [0, 5, 0],
-      transition: {
-        duration: 6,
-        repeat: Infinity,
-        ease: "easeInOut"
-      }
-    }
-  };
-
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {[...Array(5)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute w-4 h-4 rounded-full opacity-20"
-          style={{
-            left: `${20 + i * 15}%`,
-            top: `${30 + i * 10}%`,
-          }}
-          variants={floatingVariants}
-          animate="animate"
-          transition={{ delay: i * 0.8 }}
-        />
-      ))}
-    </div>
-  );
-};
 
 interface UseCase {
   id: string;
@@ -242,65 +43,58 @@ const UseCaseCard = React.memo(
           transition: { duration: 0.2 },
         }}
         whileTap={{ scale: 0.98 }}
+        className="h-full"
       >
-        <Card className="h-full bg-white overflow-hidden transition-all duration-300 border border-gray-200 hover:border-indigo-300 hover:shadow-lg relative group">
-          <div className="relative h-48 overflow-hidden bg-gray-100">
+        <div className="h-full bg-white overflow-hidden transition-all duration-300 border-0 hover:shadow-2xl relative group rounded-xl shadow-lg flex flex-col">
+          <div className="relative h-56 overflow-hidden flex-shrink-0">
             <Image
+            width={100}
+            height={100}
               src={useCase.image}
               alt={useCase.title}
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover transition-transform duration-500 hover:scale-105"
-              priority={index < 3}
-              placeholder="blur"
-              blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bccbqbDUK3Y4q9y1B1X5sK7/2Q=="
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-white/70 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
             <motion.div
               whileHover={{ scale: 1.05 }}
-              className="absolute bottom-4 left-4"
+              className="absolute bottom-4 left-4 z-10"
             >
-              <Badge className="text-gray-800 shadow-sm bg-white/90">
+              <span className="inline-block px-3 py-1 text-sm font-medium text-white shadow-lg bg-indigo-600/90 border-0 backdrop-blur-sm rounded-full">
                 {useCase.category}
-              </Badge>
+              </span>
             </motion.div>
           </div>
 
-          <CardHeader className="pb-3">
-            <div className="flex items-center text-sm text-gray-500 mb-2">
+          <div className="p-6 flex flex-col flex-grow">
+            <div className="flex items-center text-sm text-gray-500 mb-3">
               <Clock className="w-4 h-4 mr-2" />
               {useCase.readTime}
             </div>
-            <motion.div whileHover={{ scale: 1.02, x: 4 }}>
-              <CardTitle className="text-xl font-semibold text-gray-900 hover:text-indigo-600 transition-colors">
+            <motion.div whileHover={{ scale: 1.01, x: 2 }}>
+              <h3 className="text-xl font-semibold text-gray-900 hover:text-indigo-600 transition-colors mb-3 line-clamp-2">
                 {useCase.title}
-              </CardTitle>
+              </h3>
             </motion.div>
-          </CardHeader>
 
-          <CardContent>
-            <motion.div whileHover={{ scale: 1.01 }}>
-              <CardDescription className="text-gray-600 mb-4">
+            <motion.div whileHover={{ scale: 1.005 }} className="flex-grow">
+              <p className="text-gray-600 mb-4 line-clamp-3">
                 {useCase.description}
-              </CardDescription>
+              </p>
             </motion.div>
-
-            <motion.div whileHover={{ x: 6 }}>
-              <Button
-                variant="link"
-                className="px-0 text-indigo-600 hover:text-indigo-800 group"
-              >
+{/* 
+            <motion.div whileHover={{ x: 4 }}>
+              <button className="inline-flex items-center px-0 text-indigo-600 hover:text-indigo-800 font-medium transition-colors">
                 Read more
                 <motion.div
-                  whileHover={{ rotate: -45, x: 6 }}
+                  whileHover={{ x: 4 }}
                   transition={{ type: "spring", stiffness: 300 }}
                 >
-                  <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
+                  <ArrowRight className="w-4 h-4 ml-2" />
                 </motion.div>
-              </Button>
-            </motion.div>
-          </CardContent>
-        </Card>
+              </button>
+            </motion.div> */}
+          </div>
+        </div>
       </motion.div>
     );
   }
@@ -309,20 +103,11 @@ const UseCaseCard = React.memo(
 UseCaseCard.displayName = "UseCaseCard";
 
 export const UseCasesSectionTwo = () => {
-  const [particlesReady, setParticlesReady] = useState(false);
   const heroRef = useRef(null);
   const detailRef = useRef(null);
   const isHeroInView = useInView(heroRef, { once: true, amount: 0.3 });
   const isDetailInView = useInView(detailRef, { once: true, amount: 0.2 });
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setParticlesReady(true);
-    }, 100);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Text reveal animation
   const textVariants: Variants = {
     hidden: { 
       opacity: 0,
@@ -341,21 +126,6 @@ export const UseCasesSectionTwo = () => {
     })
   };
 
-  // Gradient text animation
-  const gradientTextVariants: Variants = {
-    hidden: { 
-      backgroundPosition: "200% center" 
-    },
-    visible: {
-      backgroundPosition: "0% center",
-      transition: {
-        duration: 2,
-        ease: "easeInOut"
-      }
-    }
-  };
-
-  // Subtitle animation with magnetic effect
   const subtitleVariants: Variants = {
     hidden: { 
       opacity: 0, 
@@ -442,29 +212,10 @@ export const UseCasesSectionTwo = () => {
   ];
 
   return (
-    <div className="text-gray-900 relative overflow-hidden">
-      {/* Enhanced Sparkles Background for entire component */}
-      {particlesReady && (
-        <div className="absolute inset-0 w-full h-full">
-          <Sparkles
-            background="transparent"
-            minSize={0.6}
-            maxSize={1.4}
-            particleDensity={80}
-            particleColor="#3b82f6"
-            speed={0.8}
-            className="opacity-80"
-          />
-        </div>
-      )}
-
-      {/* Floating Elements */}
-      <FloatingElements />
-
-      {/* Animated Background Shapes */}
+    <div className="text-gray-900 relative overflow-hidden bg-gradient-to-b from-white via-slate-50/30 to-white min-h-screen">
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
-          className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-indigo-400/20 to-purple-400/20 rounded-full blur-3xl"
+          className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-indigo-400/20 to-purple-400/20 rounded-full blur-3xl"
           animate={{
             scale: [1, 1.2, 1],
             rotate: [0, 180, 360],
@@ -476,7 +227,7 @@ export const UseCasesSectionTwo = () => {
           }}
         />
         <motion.div
-          className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 rounded-full blur-3xl"
+          className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-blue-400/15 via-cyan-400/15 to-purple-400/15 rounded-full blur-3xl"
           animate={{
             scale: [1.2, 1, 1.2],
             rotate: [360, 180, 0],
@@ -489,55 +240,59 @@ export const UseCasesSectionTwo = () => {
         />
       </div>
 
-      {/* Main Content */}
       <div className="relative z-10 w-full">
-        {/* Hero Section */}
-        <section className="px-6 pt-30 flex items-center" ref={heroRef}>
-          <div className="max-w-7xl mx-auto text-center">
+        <section className="px-6 pt-24 pb-12 flex items-center" ref={heroRef}>
+          <div className="max-w-7xl mx-auto text-center w-full">
             <motion.div
               className="mb-8"
               initial="hidden"
               animate={isHeroInView ? "visible" : "hidden"}
             >
-              {/* Main Title with reveal effect */}
               <div className="perspective-1000">
                 <motion.div
                   variants={textVariants}
                   custom={0}
-                  className="overflow-hidden"
+                  className="overflow-visible"
                 >
                   <motion.h1 
-                    className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 bg-clip-text text-transparent"
-                    variants={gradientTextVariants}
-                    style={{
-                      backgroundSize: "200% 100%"
-                    }}
+                    className="text-5xl md:text-7xl font-bold overflow-visible mb-4"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={isHeroInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+                    transition={{ duration: 0.8, delay: 0.2 }}
                   >
-                    AI Solutions
+                    {["AI", "Solutions"].map((word, i) => (
+                      <motion.span
+                        key={i}
+                        className="inline-block mr-4 bg-gradient-to-r from-gray-900 via-slate-800 to-gray-900 bg-clip-text text-transparent transition-colors duration-200 ease-out hover:bg-gradient-to-r hover:from-violet-600 hover:via-blue-600 hover:to-cyan-500"
+                        initial={{ opacity: 0, rotateY: 90 }}
+                        whileInView={{ opacity: 1, rotateY: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6, delay: i * 0.1 }}
+                        whileHover={{ y: -3, transition: { duration: 0.18 } }}
+                      >
+                        {word}
+                      </motion.span>
+                    ))}
                   </motion.h1>
                 </motion.div>
               </div>
 
-              {/* Subtitle with magnetic hover effect */}
               <motion.div 
                 className="flex items-center justify-center gap-3 mb-8"
                 variants={subtitleVariants}
+                initial="hidden"
+                animate={isHeroInView ? "visible" : "hidden"}
                 whileHover="hover"
               >
                 <motion.span 
                   className="text-2xl md:text-3xl text-gray-600"
-                  whileHover={{ 
-                    color: "#4f46e5",
-                    transition: { duration: 0.3 }
-                  }}
                 >
                   Industry-Specific AI Applications
                 </motion.span>
               </motion.div>
 
-              {/* Description */}
               <motion.p 
-                className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed mb-12"
+                className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed"
                 initial={{ opacity: 0, y: 50 }}
                 animate={isHeroInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
                 transition={{ duration: 0.8, delay: 1.8 }}
@@ -552,8 +307,7 @@ export const UseCasesSectionTwo = () => {
           </div>
         </section>
 
-        {/* Use Cases Section */}
-        <section className="py-8 px-6 pb-16" ref={detailRef}>
+        <section className="py-12 px-6 pb-20" ref={detailRef}>
           <div className="max-w-7xl mx-auto">
             <motion.div
               className="text-center mb-16"
@@ -563,9 +317,28 @@ export const UseCasesSectionTwo = () => {
               }
               transition={{ duration: 0.6 }}
             >
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Featured Use Cases
-              </h2>
+              <motion.h2
+                className="text-3xl md:text-4xl font-bold mb-4 overflow-visible"
+                initial={{ opacity: 0, y: 20 }}
+                animate={
+                  isDetailInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+                }
+                transition={{ duration: 0.6, delay: 0.1 }}
+              >
+                {["Featured", "Use", "Cases"].map((word, i) => (
+                  <motion.span
+                    key={i}
+                    className="inline-block mr-3 bg-gradient-to-r from-gray-900 via-slate-800 to-gray-900 bg-clip-text text-transparent transition-colors duration-200 ease-out hover:bg-gradient-to-r hover:from-violet-600 hover:via-blue-600 hover:to-cyan-500"
+                    initial={{ opacity: 0, rotateY: 90 }}
+                    whileInView={{ opacity: 1, rotateY: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: i * 0.1 }}
+                    whileHover={{ y: -3, transition: { duration: 0.18 } }}
+                  >
+                    {word}
+                  </motion.span>
+                ))}
+              </motion.h2>
               <p className="text-xl text-gray-600">
                 Explore our industry-specific AI applications
               </p>

@@ -1,6 +1,5 @@
-"use client";
-
-import React, { useState, useRef, useEffect } from "react";
+"use client"
+import React, { useState, useRef, useEffect, ChangeEvent, FormEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Mail, 
@@ -8,70 +7,11 @@ import {
   MapPin, 
   Send, 
   Github, 
-  Twitter, 
   Linkedin, 
   Instagram,
   Sparkles,
   CheckCircle
 } from "lucide-react";
-
-// Custom Button Component with proper TypeScript types
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  children: React.ReactNode;
-  className?: string;
-}
-
-const Button: React.FC<ButtonProps> = ({ children, className = "", ...props }) => (
-  <button
-    className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${className}`}
-    {...props}
-  >
-    {children}
-  </button>
-);
-
-// Custom Input Component with proper TypeScript types
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  className?: string;
-}
-
-const Input: React.FC<InputProps> = ({ className = "", ...props }) => (
-  <input
-    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 ${className}`}
-    {...props}
-  />
-);
-
-// Custom Textarea Component with proper TypeScript types
-interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
-  className?: string;
-}
-
-const Textarea: React.FC<TextareaProps> = ({ className = "", ...props }) => (
-  <textarea
-    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none ${className}`}
-    {...props}
-  />
-);
-
-// const FloatingBrain: React.FC<{ className?: string }> = ({ className = "" }) => (
-//   <motion.div
-//     className={`relative ${className}`}
-//     animate={{
-//       y: [0, -10, 0],
-//       rotateY: [0, 360],
-//     }}
-//     transition={{
-//       y: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-//       rotateY: { duration: 8, repeat: Infinity, ease: "linear" },
-//     }}
-//   >
-//     <div className="relative w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-2xl flex items-center justify-center">
-//       <Brain className="w-8 h-8 text-white" />
-//       <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-2xl" />
-//     </div>
-//   </motion.div>
-// );
 
 interface FormData {
   name: string;
@@ -79,6 +19,75 @@ interface FormData {
   subject: string;
   message: string;
 }
+
+interface Errors {
+  name?: string;
+  email?: string;
+  subject?: string;
+  message?: string;
+}
+
+interface SocialLink {
+  icon: React.ComponentType<{ className: string }>;
+  href: string;
+  label: string;
+}
+
+interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'type'> {
+  children: React.ReactNode;
+  className?: string;
+  type?: 'submit' | 'button' | 'reset';
+}
+
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  className?: string;
+}
+
+interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+  className?: string;
+}
+
+const Button = ({ children, className = "", type = "button", ...props }: ButtonProps) => (
+  <button
+    type={type}
+    className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${className}`}
+    {...props}
+  >
+    {children}
+  </button>
+);
+
+const Input = ({ className = "", ...props }: InputProps) => (
+  <input
+    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 ${className}`}
+    {...props}
+  />
+);
+
+const Textarea = ({ className = "", ...props }: TextareaProps) => (
+  <textarea
+    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none ${className}`}
+    {...props}
+  />
+);
+
+const XIcon = ({ className }: { className: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.6l-5.165-6.75-5.868 6.75h-3.308l7.732-8.835L2.882 2.25h6.6l4.759 6.318L17.25 2.25h.994zm-1.106 17.62h1.828L7.84 5.125H5.968l11.17 14.745z"/>
+  </svg>
+);
+
+const ThreadsIcon = ({ className }: { className: string }) => (
+  <svg
+    className={className}
+    viewBox="0 0 192 192"
+    fill="currentColor"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M141.537 88.9883C140.71 88.5919 139.87 88.2104 139.019 87.8451C137.537 60.5382 122.616 44.905 97.5619 44.745C97.4484 44.7443 97.3355 44.7443 97.222 44.7443C82.2364 44.7443 69.7731 51.1409 62.102 62.7807L75.881 72.2328C81.6116 63.5383 90.6052 61.6848 97.2286 61.6848C97.3051 61.6848 97.3819 61.6848 97.4576 61.6855C105.707 61.7381 111.932 64.1366 115.961 68.814C118.893 72.2193 120.854 76.925 121.825 82.8638C114.511 81.6207 106.601 81.2385 98.145 81.7233C74.3247 83.0954 59.0111 96.9879 60.0396 116.292C60.5615 126.084 65.4397 134.508 73.775 140.011C80.8224 144.663 89.899 146.938 99.3323 146.423C111.79 145.74 121.563 140.987 128.381 132.296C133.559 125.696 136.834 117.143 138.28 106.366C144.217 109.949 148.617 114.664 151.047 120.332C155.179 129.967 155.42 145.8 142.501 158.708C131.182 170.016 117.576 174.908 97.0135 175.059C74.2042 174.89 56.9538 167.575 45.7381 153.317C35.2355 139.966 29.8077 120.682 29.6052 96C29.8077 71.3178 35.2355 52.0336 45.7381 38.6827C56.9538 24.4249 74.2039 17.11 97.0132 16.9405C119.988 17.1113 137.539 24.4614 149.184 38.788C154.894 45.8136 159.199 54.6488 162.037 64.9503L178.184 60.6422C174.744 47.9622 169.331 37.0357 161.965 27.974C147.036 9.60668 125.202 0.195148 97.0695 0H96.9569C68.8816 0.19447 47.2921 9.6418 32.7883 28.0793C19.8819 44.4864 13.2244 67.3157 13.0007 95.9325L13 96L13.0007 96.0675C13.2244 124.684 19.8819 147.514 32.7883 163.921C47.2921 182.358 68.8816 191.806 96.9569 192H97.0695C122.03 191.827 139.624 185.292 154.118 170.811C173.081 151.866 172.51 128.119 166.26 113.541C161.776 103.087 153.227 94.5962 141.537 88.9883ZM98.4405 129.507C88.0005 130.095 77.1544 125.409 76.6196 115.372C76.2232 107.93 81.9158 99.626 99.0812 98.6368C101.047 98.5234 102.976 98.468 104.871 98.468C111.106 98.468 116.939 99.0737 122.242 100.233C120.264 124.935 108.662 128.946 98.4405 129.507Z" />
+  </svg>
+);
+
 
 export function FooterDemo() {
   const [formData, setFormData] = useState<FormData>({
@@ -88,15 +97,13 @@ export function FooterDemo() {
     message: ""
   });
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<Errors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const cardRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement | null>(null);
 
-  // Force scroll to top when component mounts (for page refreshes)
   useEffect(() => {
-    // Small delay to ensure page is fully loaded
     const timer = setTimeout(() => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }, 100);
@@ -104,14 +111,13 @@ export function FooterDemo() {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
-    // Clear error when user starts typing
-    if (errors[name]) {
+    if (errors[name as keyof Errors]) {
       setErrors(prev => ({
         ...prev,
         [name]: ""
@@ -119,8 +125,8 @@ export function FooterDemo() {
     }
   };
 
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
+  const validateForm = (): boolean => {
+    const newErrors: Errors = {};
 
     if (!formData.name.trim()) {
       newErrors.name = "Name is required";
@@ -146,18 +152,19 @@ export function FooterDemo() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const isFormValid = () => {
-    return (
-      formData.name.trim() &&
-      formData.email.trim() &&
-      formData.subject.trim() &&
-      formData.message.trim() &&
-      /\S+@\S+\.\S+/.test(formData.email) &&
-      formData.message.trim().length >= 10
-    );
-  };
+const isFormValid = (): boolean => {
+  return (
+    !!formData.name.trim() &&
+    !!formData.email.trim() &&
+    !!formData.subject.trim() &&
+    !!formData.message.trim() &&
+    /\S+@\S+\.\S+/.test(formData.email) &&
+    formData.message.trim().length >= 10
+  );
+};
 
-  const handleSubmit = async (e: React.FormEvent) => {
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     if (!validateForm()) return;
@@ -178,7 +185,6 @@ export function FooterDemo() {
         return;
       }
 
-      // Show success when email is successfully sent
       setIsSubmitted(true);
     } catch (error) {
       console.error("Submission error:", error);
@@ -200,11 +206,12 @@ export function FooterDemo() {
     setIsSubmitting(false);
   };
 
-  const socialLinks = [
-    { icon: Github, href: "#", label: "GitHub" },
-    { icon: Twitter, href: "#", label: "Twitter" },
-    { icon: Linkedin, href: "#", label: "LinkedIn" },
-    { icon: Instagram, href: "#", label: "Instagram" }
+  const socialLinks: SocialLink[] = [
+    { icon: Github, href: "https://github.com", label: "GitHub" },
+    { icon: XIcon, href: "https://x.com/EquilibrateAI", label: "X (Twitter)" },
+    { icon: Linkedin, href: "https://www.linkedin.com/company/equilibrate-ai", label: "LinkedIn" },
+    { icon: Instagram, href: "https://www.instagram.com/equilibrate.ai?igsh=ZmtkN2dkMDcwY3kx", label: "Instagram" },
+    { icon: ThreadsIcon, href: "https://www.threads.net/@equilibrate.ai", label: "Threads" }
   ];
 
   return (
@@ -216,7 +223,6 @@ export function FooterDemo() {
         minHeight: 'auto'
       }}
     >
-      {/* Background Elements */}
       <div className="absolute inset-0 z-0">
         <div 
           className="absolute inset-0 opacity-20"
@@ -230,7 +236,6 @@ export function FooterDemo() {
         />
       </div>
       
-      {/* Floating Particles */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         {Array(15).fill(null).map((_, i) => (
           <motion.div
@@ -258,7 +263,6 @@ export function FooterDemo() {
         ))}
       </div>
       
-      {/* Animated Background Orbs */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <motion.div
           className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-to-br from-blue-400/10 to-purple-600/10 rounded-full blur-3xl"
@@ -292,13 +296,9 @@ export function FooterDemo() {
       
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
-          {/* Company Info Section */}
           <div className="space-y-6">
             <div>
               <div className="flex items-center gap-3 mb-4">
-                {/* <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                  <Brain className="w-7 h-7 text-white" />
-                </div> */}
                 <h3 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                   Equilibrate.AI
                 </h3>
@@ -308,26 +308,31 @@ export function FooterDemo() {
               </p>
             </div>
             
-            {/* Contact Info */}
             <div className="space-y-4">
               <h4 className="text-xl font-semibold text-black mb-3">Get in Touch</h4>
               <div className="space-y-3">
-                <div className="flex items-center gap-4 group cursor-pointer">
+                <a 
+                  href="mailto:anish.navali@equilibrateai.com"
+                  className="flex items-center gap-4 group cursor-pointer"
+                >
                   <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
                     <Mail className="w-5 h-5 text-blue-600" />
                   </div>
                   <span className="text-black group-hover:text-black transition-colors">
                     anish.navali@equilibrateai.com
                   </span>
-                </div>
-                <div className="flex items-center gap-4 group cursor-pointer">
+                </a>
+                <a 
+                  href="tel:+91-9606024155"
+                  className="flex items-center gap-4 group cursor-pointer"
+                >
                   <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
                     <Phone className="w-5 h-5 text-green-600" />
                   </div>
                   <span className="text-black group-hover:text-black transition-colors">
                     +91-9606024155
                   </span>
-                </div>
+                </a>
                 <div className="flex items-center gap-4 group cursor-pointer">
                   <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200 transition-colors">
                     <MapPin className="w-5 h-5 text-purple-600" />
@@ -339,14 +344,15 @@ export function FooterDemo() {
               </div>
             </div>
             
-            {/* Social Links */}
             <div className="space-y-3">
               <h4 className="text-xl font-semibold text-black">Follow Us</h4>
-              <div className="flex gap-4">
+              <div className="flex gap-4 flex-wrap">
                 {socialLinks.map((social, index) => (
                   <motion.a
                     key={index}
                     href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="w-12 h-12 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-xl flex items-center justify-center hover:bg-white transition-all duration-300 shadow-sm hover:shadow-md group"
                     whileHover={{ scale: 1.1, y: -2 }}
                     whileTap={{ scale: 0.95 }}
@@ -359,10 +365,8 @@ export function FooterDemo() {
             </div>
           </div>
           
-          {/* Contact Form Section */}
           <motion.div
             ref={cardRef}
-            // whileHover={{ scale: 1.02, rotateX: 4, rotateY: -4 }}
             style={{
               perspective: 1000,
               transformStyle: "preserve-3d",
@@ -373,7 +377,6 @@ export function FooterDemo() {
             }}
             className="group bg-white/90 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 shadow-lg hover:shadow-2xl relative overflow-hidden transition-all"
           >
-            {/* 3D Glow */}
             <motion.div
               className="absolute inset-0 pointer-events-none"
               style={{
@@ -383,7 +386,6 @@ export function FooterDemo() {
               }}
             />
             
-            {/* Animated Border */}
             <motion.div
               className="absolute -inset-1 rounded-2xl pointer-events-none"
               style={{
@@ -393,7 +395,6 @@ export function FooterDemo() {
               }}
             />
             
-            {/* Floating 3D particles */}
             <motion.div
               className="absolute right-4 top-4 w-8 h-8 rounded-full bg-blue-500/20 blur-[6px] pointer-events-none"
               animate={{
@@ -441,7 +442,7 @@ export function FooterDemo() {
                       </p>
                     </div>
                     
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="space-y-4">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Input
@@ -540,7 +541,10 @@ export function FooterDemo() {
                         whileTap={{ scale: 0.98 }}
                       >
                         <Button
-                          type="submit"
+                          type="button"
+                          onClick={() => {
+                            handleSubmit({ preventDefault: () => {} } as FormEvent<HTMLFormElement>);
+                          }}
                           disabled={!isFormValid() || isSubmitting}
                           className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
@@ -565,7 +569,7 @@ export function FooterDemo() {
                           )}
                         </Button>
                       </motion.div>
-                    </form>
+                    </div>
                   </motion.div>
                 ) : (
                   <motion.div
@@ -618,17 +622,14 @@ export function FooterDemo() {
           </motion.div>
         </div>
         
-        {/* Bottom Section */}
         <div className="pt-6 border-t border-gray-400 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-black text-sm">
             © 2025 Equilibrate.AI. All rights reserved.
           </p>
-          {/* Decorative Brain Element */}
-          {/* <div className="w-8 h-8">
-            <FloatingBrain className="w-full h-full" />
-          </div> */}
         </div>
       </div>
     </footer>
   );
 }
+
+export default FooterDemo;

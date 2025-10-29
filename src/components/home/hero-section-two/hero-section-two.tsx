@@ -1,3 +1,4 @@
+// File: src/components/home/hero-section-two/hero-section-two.tsx
 "use client";
 import React, { useRef } from "react";
 import { motion, useInView, Variants } from "framer-motion";
@@ -16,78 +17,6 @@ type FeatureType = {
   icon: LucideIcon | React.FC<{ className?: string }>;
   description: string;
 };
-
-// Enhanced Grid Pattern Component - same as hero section three
-function GridPattern({
-  width,
-  height,
-  x,
-  y,
-  squares,
-  ...props
-}: React.ComponentProps<"svg"> & {
-  width: number;
-  height: number;
-  x: string;
-  y: string;
-  squares?: number[][];
-}) {
-  const patternId = React.useId();
-
-  return (
-    <svg aria-hidden="true" {...props}>
-      <defs>
-        <pattern
-          id={patternId}
-          width={width}
-          height={height}
-          patternUnits="userSpaceOnUse"
-          x={x}
-          y={y}
-        >
-          <path
-            d={`M.5 ${height}V.5H${width}`}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1"
-            className="text-gray-600/80"
-          />
-        </pattern>
-      </defs>
-      <rect
-        width="100%"
-        height="100%"
-        strokeWidth={0}
-        fill={`url(#${patternId})`}
-      />
-      {squares && (
-        <svg x={x} y={y} className="overflow-visible">
-          {squares.map(([x, y], index) => (
-            <rect
-              strokeWidth="0"
-              key={index}
-              width={width + 1}
-              height={height + 1}
-              x={x * width}
-              y={y * height}
-              fill="currentColor"
-              className="text-blue-600/40"
-            />
-          ))}
-        </svg>
-      )}
-    </svg>
-  );
-}
-
-// Grid pattern generator function - same as hero section three
-function genRandomPattern(length?: number): number[][] {
-  length = length ?? 5;
-  return Array.from({ length }, () => [
-    Math.floor(Math.random() * 4) + 7,
-    Math.floor(Math.random() * 6) + 1,
-  ]);
-}
 
 interface FeatureCardProps {
   feature: FeatureType;
@@ -113,7 +42,6 @@ function FeatureCard({
   >) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
-  const p = genRandomPattern();
 
   const cardVariants: Variants = {
     hidden: {
@@ -166,7 +94,7 @@ function FeatureCard({
     <motion.div
       ref={ref}
       className={cn(
-        "relative overflow-hidden p-6 perspective-1000",
+        "relative overflow-hidden p-6 perspective-1000 group",
         className
       )}
       variants={cardVariants}
@@ -181,29 +109,7 @@ function FeatureCard({
       whileTap={{ scale: 0.98 }}
       {...props}
     >
-      <motion.div
-        className="pointer-events-none absolute top-0 left-1/2 -mt-2 -ml-20 h-full w-full  [mask-image:linear-gradient(white,transparent)] opacity-60"
-        initial={{ opacity: 0 }}
-        animate={isInView ? { opacity: 0.6 } : { opacity: 0 }}
-        transition={{ duration: 1, delay: index * 0.15 + 0.2 }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-r from-gray-900/15 to-gray-900/5 [mask-image:radial-gradient(farthest-side_at_top,white,transparent)]">
-          <GridPattern
-            width={20}
-            height={20}
-            x="-12"
-            y="4"
-            squares={p}
-            className="absolute inset-0 h-full w-full mix-blend-overlay"
-          />
-        </div>
-      </motion.div>
-
-      <motion.div
-        className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-400/20 to-purple-400/20 opacity-0"
-        whileHover={{ opacity: 1 }}
-        transition={{ duration: 0.3 }}
-      />
+      <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-400/20 to-purple-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
       <motion.div className="relative z-10 flex flex-col h-full" variants={contentVariants}>
         <motion.div
@@ -256,17 +162,17 @@ export const HeroSectionTwo: React.FC = () => {
     },
   };
 
-  const itemVariants: Variants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.5,
-        ease: "easeOut",
-      },
-    },
-  };
+  // const itemVariants: Variants = {
+  //   hidden: { y: 20, opacity: 0 },
+  //   visible: {
+  //     y: 0,
+  //     opacity: 1,
+  //     transition: {
+  //       duration: 0.5,
+  //       ease: "easeOut",
+  //     },
+  //   },
+  // };
 
   const PlayIcon: React.FC<{ className?: string }> = ({ className }) => (
     <svg
@@ -289,56 +195,9 @@ export const HeroSectionTwo: React.FC = () => {
   );
 
   return (
-    <div className="relative min-h-screen overflow-hidden border-t border-gray-400 bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
-      {/* Grid Background with reduced opacity - matching hero section one */}
-      <div className="absolute inset-0 -z-10">
-        <GridPattern
-          width={72}
-          height={56}
-          x="50%"
-          y="100%"
-          squares={genRandomPattern(6)}
-          className="absolute inset-0 -z-10 text-gray-300/30 opacity-15"
-        />
-      </div>
-
-      {/* Additional background gradients - matching hero section one subtlety */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-100/20 via-transparent to-gray-100/10" />
-
+    <div className="relative min-h-screen overflow-hidden border-gray-200">
       <motion.div
-        className="absolute inset-0 opacity-15"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.15 }}
-        transition={{ duration: 3 }}
-      >
-        {Array.from({ length: 8 }).map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              width: `${2 + Math.random() * 2}px`,
-              height: `${2 + Math.random() * 2}px`,
-              background: `hsl(${220 + Math.random() * 40}, 30%, 70%)`,
-            }}
-            animate={{
-              y: [0, -20, 0],
-              opacity: [0.3, 0.6, 0.3],
-              scale: [1, 1.1, 1],
-            }}
-            transition={{
-              duration: 8 + Math.random() * 4,
-              repeat: Infinity,
-              delay: Math.random() * 3,
-              ease: "easeInOut",
-            }}
-          />
-        ))}
-      </motion.div>
-
-      <motion.div
-        className="relative z-10  container mx-auto px-3 xs:px-4 sm:px-6 md:px-8 lg:px-8 pt-4 xs:pt-6 sm:pt-8 md:pt-10 lg:pt-10 pb-6 xs:pb-8 sm:pb-10 md:pb-12 lg:pb-14"
+        className="relative z-10 container mx-auto px-3 xs:px-4 sm:px-6 md:px-8 lg:px-8 pt-4 xs:pt-6 sm:pt-8 md:pt-10 lg:pt-10 pb-6 xs:pb-8 sm:pb-10 md:pb-12 lg:pb-14"
         initial="hidden"
         animate="visible"
         variants={containerVariants}
@@ -350,12 +209,11 @@ export const HeroSectionTwo: React.FC = () => {
           >
             <motion.h1
               className="text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold mb-4 xs:mb-6 sm:mb-8 md:mb-10 drop-shadow overflow-hidden px-2 sm:px-0 leading-tight"
-              whileHover={{ scale: 1.01 }}
             >
               {"Our Philosophy".split(" ").map((word, i) => (
                 <motion.span
                   key={i}
-                  className="inline-block mr-2 mb-2 bg-gradient-to-r from-gray-900 via-slate-800 to-gray-900 bg-clip-text text-transparent"
+                  className="inline-block mr-2 mb-2 bg-gradient-to-r from-gray-900 via-slate-800 to-gray-900 bg-clip-text text-transparent transition-colors duration-200 ease-out hover:bg-gradient-to-r hover:from-violet-600 hover:via-blue-600 hover:to-cyan-500"
                   initial={{ opacity: 0, rotateY: 90 }}
                   whileInView={{ opacity: 1, rotateY: 0 }}
                   viewport={{ once: true }}
@@ -366,7 +224,6 @@ export const HeroSectionTwo: React.FC = () => {
                   }}
                   whileHover={{
                     y: -3,
-                    color: "#3b82f6",
                     transition: { duration: 0.2 },
                   }}
                 >
@@ -389,7 +246,7 @@ export const HeroSectionTwo: React.FC = () => {
           </motion.div>
         </div>
 
-        {/* Enhanced Philosophy Cards */}
+        {/* Philosophy Cards */}
         <motion.div
           className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-2 xs:gap-3 sm:gap-4 md:gap-6 mb-4 xs:mb-6 sm:mb-8 md:mb-10 lg:mb-12"
           initial="hidden"
@@ -437,18 +294,7 @@ export const HeroSectionTwo: React.FC = () => {
           ))}
         </motion.div>
 
-        {/* Enhanced Features Section */}
-        <motion.div
-          className="text-center mb-4 xs:mb-6 sm:mb-8 md:mb-10 lg:mb-12"
-          variants={itemVariants}
-          whileInView={{ scale: [0.9, 1] }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-        >
-          {/* Optional: Add title and description here if needed */}
-        </motion.div>
-
-        {/* Enhanced Feature Cards Grid */}
+        {/* Feature Cards Grid */}
         <motion.div
           className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-2 xs:gap-3 sm:gap-4 md:gap-6"
           initial="hidden"

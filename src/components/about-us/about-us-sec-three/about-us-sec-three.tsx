@@ -166,12 +166,24 @@ export const AboutSectionThree: React.FC<ValuesSectionProps> = ({
         >
           <motion.div variants={itemVariants}>
             <motion.h2
-              className="text-3xl font-bold mb-4 text-center text-gray-800"
+              className="text-3xl font-bold mb-4 text-center text-gray-800 overflow-hidden"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
             >
-              Our Core Values
+              {"Our Core Values".split(" ").map((word, i) => (
+                <motion.span
+                  key={i}
+                  className="inline-block mr-2 bg-gradient-to-r from-gray-900 via-slate-800 to-gray-900 bg-clip-text text-transparent transition-colors duration-200 ease-out hover:bg-gradient-to-r hover:from-violet-600 hover:via-blue-600 hover:to-cyan-500"
+                  initial={{ opacity: 0, rotateY: 90 }}
+                  whileInView={{ opacity: 1, rotateY: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: i * 0.08 }}
+                  whileHover={{ y: -3, transition: { duration: 0.18 } }}
+                >
+                  {word}
+                </motion.span>
+              ))}
             </motion.h2>
 
             <motion.p

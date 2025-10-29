@@ -1,5 +1,4 @@
-// SuccessModal.tsx
-export default function SuccessModal({ finalScore, finalCoins, onRestart, onNavigateHome, isMobile }) {
+export function SuccessModal({ finalScore, finalCoins, onRestart, onNavigateHome, isMobile }) {
   const handlePlayAgain = () => {
     onRestart();
   };
@@ -20,23 +19,66 @@ export default function SuccessModal({ finalScore, finalCoins, onRestart, onNavi
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'rgba(2, 6, 23, 0.85)',
+        background: 'linear-gradient(to bottom right, rgba(248, 250, 252, 0.85), rgba(191, 219, 254, 0.85))',
         backdropFilter: 'blur(12px)',
-        padding: '16px'
+        padding: '16px',
+        overflow: 'hidden'
       }}
     >
+      {/* Grid Background */}
+      <div style={{ position: 'absolute', inset: 0, opacity: 0.2 }}>
+        <div style={{
+          backgroundImage: `
+            linear-gradient(rgba(16, 185, 129, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(16, 185, 129, 0.1) 1px, transparent 1px)
+          `,
+          backgroundSize: '60px 60px',
+          width: '100%',
+          height: '100%',
+        }} />
+      </div>
+
+      {/* Animated Orb */}
+      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}>
+        <div style={{
+          position: 'absolute',
+          bottom: '15%',
+          left: '10%',
+          width: '300px',
+          height: '300px',
+          background: 'linear-gradient(to bottom right, rgba(16, 185, 129, 0.15), rgba(96, 165, 250, 0.15))',
+          borderRadius: '50%',
+          filter: 'blur(60px)',
+          animation: 'float-orb-3 28s ease-in-out infinite',
+        }} />
+      </div>
+
+      <style>{`
+        @keyframes float-orb-3 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          50% { transform: translate(40px, -35px) scale(1.1); }
+        }
+        @keyframes slideIn {
+          from { opacity: 0; transform: scale(0.95); }
+          to { opacity: 1; transform: scale(1); }
+        }
+      `}</style>
+
       <div 
         style={{
           width: 'min(700px, 95vw)',
-          background: 'linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%)',
+          background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(96, 165, 250, 0.15))',
           padding: '3px',
           borderRadius: '24px',
-          boxShadow: '0 25px 80px rgba(16, 185, 129, 0.6)',
-          animation: 'modalSlideIn 0.5s ease-out'
+          boxShadow: '0 25px 80px rgba(16, 185, 129, 0.3), 0 0 40px rgba(96, 165, 250, 0.2)',
+          border: '2px solid rgba(226, 232, 240, 0.4)',
+          animation: 'slideIn 0.5s ease-out',
+          position: 'relative',
+          zIndex: 10
         }}
       >
         <div style={{
-          background: 'linear-gradient(180deg, #1a1f3a 0%, #0f1628 100%)',
+          background: 'linear-gradient(135deg, rgba(248, 250, 252, 0.95) 0%, rgba(241, 245, 249, 0.95) 100%)',
           borderRadius: '22px',
           padding: '40px 35px',
           textAlign: 'center'
@@ -61,7 +103,7 @@ export default function SuccessModal({ finalScore, finalCoins, onRestart, onNavi
             border: '2px solid rgba(16, 185, 129, 0.3)'
           }}>
             <p style={{
-              color: '#6ee7b7',
+              color: '#059669',
               fontSize: '0.95rem',
               marginBottom: '12px',
               textTransform: 'uppercase',
@@ -71,20 +113,20 @@ export default function SuccessModal({ finalScore, finalCoins, onRestart, onNavi
               Final Score
             </p>
             <p style={{
-              color: '#ffffff',
+              color: '#0f172a',
               fontSize: isMobile ? '2.5rem' : '3.5rem',
               fontWeight: '900',
               marginBottom: '8px'
             }}>
               {finalScore}
             </p>
-            <p style={{
-              color: '#fbbf24',
+            {/* <p style={{
+              color: '#f59e0b',
               fontSize: '1rem',
               fontWeight: '700'
             }}>
               🪙 Coins: {finalCoins}
-            </p>
+            </p> */}
           </div>
 
           <div style={{
@@ -95,7 +137,7 @@ export default function SuccessModal({ finalScore, finalCoins, onRestart, onNavi
             border: '2px solid rgba(16, 185, 129, 0.3)'
           }}>
             <p style={{
-              color: '#d1fae5',
+              color: '#047857',
               fontSize: isMobile ? '0.9rem' : '1rem',
               lineHeight: '1.6',
               fontWeight: '600'
@@ -122,6 +164,8 @@ export default function SuccessModal({ finalScore, finalCoins, onRestart, onNavi
                 boxShadow: '0 10px 40px rgba(59, 130, 246, 0.5)',
                 transition: 'all 0.3s ease'
               }}
+              onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
+              onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
             >
               🔄 PLAY AGAIN
             </button>
@@ -141,11 +185,10 @@ export default function SuccessModal({ finalScore, finalCoins, onRestart, onNavi
                 border: 'none',
                 cursor: 'pointer',
                 boxShadow: '0 8px 30px rgba(16, 185, 129, 0.4)',
-                textDecoration: 'none',
-                display: 'block',
-                textAlign: 'center',
                 transition: 'all 0.3s ease'
               }}
+              onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
+              onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
             >
               🌐 Visit Equilibrate.AI
             </button>
@@ -155,3 +198,4 @@ export default function SuccessModal({ finalScore, finalCoins, onRestart, onNavi
     </div>
   );
 }
+export default SuccessModal

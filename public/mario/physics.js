@@ -87,12 +87,20 @@ let physics = {
       }
     });
 
+    // FIXED: Coin collection with proper tracking
     gameObj.entities.coins.forEach((coin, idx) => {
       if (this.checkRectCollision(mario, coin)) {
-        console.log("coin collected");
+        console.log("🪙 COIN COLLECTED! Index:", idx, "Total coins before:", gameObj.coins);
+        
+        // Remove coin from array
         gameObj.entities.coins.splice(idx, 1);
+        
+        // Call addCoin to update score and dispatch event
         if (window.gameInstance) {
+          console.log("🪙 Calling addCoin from game instance");
           window.gameInstance.addCoin();
+        } else {
+          console.error("❌ game instance not found!");
         }
       }
     });

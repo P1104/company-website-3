@@ -1,191 +1,11 @@
+// File: src/components/home/hero-section-one/hero-section-one.tsx
 "use client";
 
-import React, { useState, useId, useEffect } from "react";
-import { motion, useAnimation, Variants } from "framer-motion";
-import { ArrowRight,Zap } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { motion, Variants } from "framer-motion";
+import { ArrowRight, Zap } from "lucide-react";
 import Spline from "@splinetool/react-spline";
 import Link from "next/link";
-import Particles, { initParticlesEngine } from "@tsparticles/react";
-import type { Container } from "@tsparticles/engine";
-import { loadSlim } from "@tsparticles/slim";
-
-function cn(...classes: (string | undefined | null | false)[]): string {
-  return classes.filter(Boolean).join(" ");
-}
-
-// Enhanced Grid Pattern Component
-function GridPattern({
-  width,
-  height,
-  x,
-  y,
-  squares,
-  ...props
-}: React.ComponentProps<"svg"> & {
-  width: number;
-  height: number;
-  x: string;
-  y: string;
-  squares?: number[][];
-}) {
-  const patternId = React.useId();
-
-  return (
-    <svg aria-hidden="true" {...props}>
-      <defs>
-        <pattern
-          id={patternId}
-          width={width}
-          height={height}
-          patternUnits="userSpaceOnUse"
-          x={x}
-          y={y}
-        >
-          <path
-            d={`M.5 ${height}V.5H${width}`}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1"
-            className="text-blue-300/40"
-          />
-        </pattern>
-      </defs>
-      <rect
-        width="100%"
-        height="100%"
-        strokeWidth={0}
-        fill={`url(#${patternId})`}
-      />
-      {squares && (
-        <svg x={x} y={y} className="overflow-visible">
-          {squares.map(([x, y], index) => (
-            <rect
-              strokeWidth="0"
-              key={index}
-              width={width + 1}
-              height={height + 1}
-              x={x * width}
-              y={y * height}
-              fill="currentColor"
-              className="text-blue-500/20"
-            />
-          ))}
-        </svg>
-      )}
-    </svg>
-  );
-}
-
-// Grid pattern generator function
-function genRandomPattern(length?: number): number[][] {
-  length = length ?? 4;
-  return Array.from({ length }, () => [
-    Math.floor(Math.random() * 4) + 7,
-    Math.floor(Math.random() * 6) + 1,
-  ]);
-}
-
-type ParticlesProps = {
-  id?: string;
-  className?: string;
-  background?: string;
-  particleSize?: number;
-  minSize?: number;
-  maxSize?: number;
-  speed?: number;
-  particleColor?: string;
-  particleDensity?: number;
-};
-
-const SparklesParticles = React.memo((props: ParticlesProps) => {
-  const {
-    id,
-    className,
-    background,
-    minSize,
-    maxSize,
-    particleColor,
-    particleDensity,
-  } = props;
-  const [init, setInit] = useState(false);
-  const [isInitializing, setIsInitializing] = useState(false);
-
-  useEffect(() => {
-    if (isInitializing) return;
-    setIsInitializing(true);
-    initParticlesEngine(async (engine) => {
-      await loadSlim(engine);
-    }).then(() => {
-      setInit(true);
-      setIsInitializing(false);
-    });
-  }, [isInitializing]);
-
-  const controls = useAnimation();
-
-  const particlesLoaded = async (container?: Container) => {
-    if (container) {
-      controls.start({
-        opacity: 1,
-        transition: { duration: 0.8 },
-      });
-    }
-  };
-
-  const generatedId = useId();
-
-  const particleOptions = {
-    background: { color: { value: background || "transparent" } },
-    fullScreen: { enable: false, zIndex: 1 },
-    fpsLimit: 120,
-    interactivity: {
-      events: {
-        onHover: { enable: true, mode: "attract" },
-        resize: { enable: true },
-      },
-      modes: {
-        attract: { distance: 200, duration: 0.4, factor: 1 },
-      },
-    },
-    particles: {
-      color: { value: particleColor || "#6366f1" },
-      move: {
-        direction: "none" as const,
-        enable: true,
-        outModes: { default: "out" as const },
-        random: true,
-        speed: { min: 0.3, max: 1.2 },
-        straight: false,
-      },
-      number: {
-        density: { enable: true, width: 800, height: 600 },
-        value: particleDensity || 56,
-      },
-      opacity: {
-        value: { min: 0.3, max: 0.7 },
-        animation: { enable: true, speed: 1, sync: false },
-      },
-      shape: { type: "circle" },
-      size: { value: { min: minSize || 1, max: maxSize || 3 } },
-    },
-    detectRetina: true,
-  };
-
-  return (
-    <motion.div animate={controls} className={cn("opacity-0", className)}>
-      {init && (
-        <Particles
-          id={id || generatedId}
-          className={cn("h-full w-full")}
-          particlesLoaded={particlesLoaded}
-          options={particleOptions}
-        />
-      )}
-    </motion.div>
-  );
-});
-
-SparklesParticles.displayName = "SparklesParticles";
 
 function AnimatedTitle() {
   const [shouldAnimate, setShouldAnimate] = useState(false);
@@ -195,7 +15,7 @@ function AnimatedTitle() {
     return () => clearTimeout(timer);
   }, []);
 
-  const titleVariants:Variants = {
+  const titleVariants: Variants = {
     hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,
@@ -217,21 +37,6 @@ function AnimatedTitle() {
       <span className="block bg-gradient-to-r from-violet-600 via-blue-600 to-cyan-500 bg-clip-text text-transparent drop-shadow-sm">
         EQUILIBRATE.AI
       </span>
-
-      <motion.div
-        className="absolute -top-4 -right-4 sm:-top-6"
-        animate={{
-          rotate: [0, 10, -10, 0],
-          scale: [1, 1.1, 1],
-        }}
-        transition={{
-          duration: 4,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-      >
-
-      </motion.div>
     </motion.h1>
   ) : (
     <h1 className="relative text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-6 sm:mb-8 leading-tight">
@@ -245,7 +50,6 @@ function AnimatedTitle() {
 export function HeroSectionOne() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isSplineLoaded, setIsSplineLoaded] = useState(false);
-  const [particlesReady, setParticlesReady] = useState(false);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -256,75 +60,14 @@ export function HeroSectionOne() {
     };
     window.addEventListener("mousemove", handleMouseMove);
 
-    const timer = setTimeout(() => setParticlesReady(true), 200);
-
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
-      clearTimeout(timer);
     };
   }, []);
 
   return (
-    <section className="relative min-h-screen pt-6 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-100/40 via-transparent to-purple-100/20" />
-
-      {/* Grid Background with reduced opacity */}
-      <div className="absolute inset-0 -z-10">
-        <GridPattern
-          width={72}
-          height={56}
-          x="50%"
-          y="100%"
-          squares={genRandomPattern(6)}
-          className="absolute inset-0 -z-10 text-blue-300/20 opacity-20"
-        />
-      </div>
-
-      {particlesReady && (
-        <div className="absolute inset-0">
-          <SparklesParticles
-            background="transparent"
-            minSize={1}
-            maxSize={4}
-            particleDensity={1}
-            particleColor="#6366f1"
-          />
-        </div>
-      )}
-
-      <motion.div
-        className="absolute inset-0 opacity-40"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.4 }}
-        transition={{ duration: 3 }}
-      >
-        {Array.from({ length: 16 }).map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              width: `${2 + Math.random() * 8}px`,
-              height: `${2 + Math.random() * 8}px`,
-              background: `hsl(${240 + Math.random() * 60}, 80%, 65%)`,
-            }}
-            animate={{
-              y: [0, -60 - Math.random() * 40, 0],
-              opacity: [0.3, 1, 0.3],
-              scale: [1, 1.5, 1],
-            }}
-            transition={{
-              duration: 6 + Math.random() * 4,
-              repeat: Infinity,
-              delay: Math.random() * 3,
-              ease: "easeInOut",
-            }}
-          />
-        ))}
-      </motion.div>
-
-      <div className="relative z-10 container mx-auto px-4 sm:px-6 py-12 sm:py-16 lg:py-20 min-h-screen flex items-center">
+    <section className="relative z-10 pt-6 overflow-hidden">
+      <div className="container mx-auto px-4 sm:px-6 py-12 sm:py-16 lg:py-20 min-h-screen flex items-center">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 xl:gap-24 items-center w-full">
           <motion.div
             className="text-center lg:text-left order-1"
@@ -376,14 +119,6 @@ export function HeroSectionOne() {
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-indigo-600/20 blur-xl group-hover:blur-2xl transition-all duration-300" />
                 </motion.button>
               </Link>
-
-              <motion.button
-                className="px-6 sm:px-8 py-3 sm:py-4 border-2 border-slate-300 text-slate-700 font-semibold text-base sm:text-lg rounded-2xl hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50 transition-all duration-300 w-full sm:w-auto"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Learn More
-              </motion.button>
             </motion.div>
           </motion.div>
 
@@ -404,14 +139,20 @@ export function HeroSectionOne() {
                   whileHover={{ scale: 1.02 }}
                 >
                   {!isSplineLoaded && (
-                    <div className="absolute inset-0 flex items-center justify-center rounded-full">
+                    <div className="absolute z-10 inset-0 flex items-center justify-center rounded-full">
                       <div className="text-center">
                         <motion.div
                           className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-6"
                           animate={{ rotate: 360 }}
-                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                          transition={{
+                            duration: 1,
+                            repeat: Infinity,
+                            ease: "linear",
+                          }}
                         />
-                        <p className="text-slate-600 text-lg font-medium">Loading AI Experience</p>
+                        <p className="text-slate-600 text-lg font-medium">
+                          Loading
+                        </p>
                         <div className="flex justify-center mt-3 space-x-1">
                           {[0, 1, 2].map((i) => (
                             <motion.div
@@ -437,7 +178,6 @@ export function HeroSectionOne() {
                     style={{
                       width: "100%",
                       height: "100%",
-                      background: "transparent",
                     }}
                     onLoad={() => setIsSplineLoaded(true)}
                     onError={(error) => {
@@ -456,7 +196,9 @@ export function HeroSectionOne() {
               >
                 <div className="inline-flex items-center gap-2 px-6 py-3 bg-white/70 backdrop-blur-md rounded-full border-2 border-white/60 text-slate-700 shadow-lg">
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                  <span className="text-sm font-medium">Click on the bubble</span>
+                  <span className="text-sm font-medium">
+                    Click on the bubble
+                  </span>
                 </div>
               </motion.div>
             </div>

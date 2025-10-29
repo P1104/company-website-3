@@ -1,84 +1,15 @@
+// File: src/components/home/hero-section-three/hero-section-three.tsx
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
 import { motion, useInView, useScroll, useTransform, Variants } from "framer-motion";
-import { Zap, Cpu, Target, Globe, Users, Cog, Sparkles } from "lucide-react";
+import { Zap, Cpu, Target, Globe, Users, Cog } from "lucide-react";
 
 type FeatureType = {
   title: string;
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   description: string;
 };
-
-function GridPattern({
-  width,
-  height,
-  x,
-  y,
-  squares,
-  ...props
-}: React.ComponentProps<"svg"> & {
-  width: number;
-  height: number;
-  x: string;
-  y: string;
-  squares?: number[][];
-}) {
-  const patternId = React.useId();
-
-  return (
-    <svg aria-hidden="true" {...props}>
-      <defs>
-        <pattern
-          id={patternId}
-          width={width}
-          height={height}
-          patternUnits="userSpaceOnUse"
-          x={x}
-          y={y}
-        >
-          <path
-            d={`M.5 ${height}V.5H${width}`}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1"
-            className="text-blue-300/40"
-          />
-        </pattern>
-      </defs>
-      <rect
-        width="100%"
-        height="100%"
-        strokeWidth={0}
-        fill={`url(#${patternId})`}
-      />
-      {squares && (
-        <svg x={x} y={y} className="overflow-visible">
-          {squares.map(([x, y], index) => (
-            <rect
-              strokeWidth="0"
-              key={index}
-              width={width + 1}
-              height={height + 1}
-              x={x * width}
-              y={y * height}
-              fill="currentColor"
-              className="text-blue-500/20"
-            />
-          ))}
-        </svg>
-      )}
-    </svg>
-  );
-}
-
-function genRandomPattern(length?: number): number[][] {
-  length = length ?? 4;
-  return Array.from({ length }, () => [
-    Math.floor(Math.random() * 4) + 7,
-    Math.floor(Math.random() * 6) + 1,
-  ]);
-}
 
 const CentralAIBrain: React.FC<{ isInView: boolean }> = ({ isInView }) => {
   const [windowWidth, setWindowWidth] = useState(0);
@@ -93,15 +24,13 @@ const CentralAIBrain: React.FC<{ isInView: boolean }> = ({ isInView }) => {
   return (
     <motion.div
       className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20"
-      initial={{ opacity: 0, scale: 0, rotateY: -180 }}
+      initial={{ opacity: 0, scale: 0 }}
       animate={isInView ? { 
         opacity: 1, 
-        scale: 1, 
-        rotateY: 0 
+        scale: 1
       } : { 
         opacity: 0, 
-        scale: 0, 
-        rotateY: -180 
+        scale: 0
       }}
       transition={{ 
         duration: 1.2, 
@@ -112,7 +41,6 @@ const CentralAIBrain: React.FC<{ isInView: boolean }> = ({ isInView }) => {
       }}
       whileHover={{
         scale: 1.1,
-        rotateY: 10,
         transition: { duration: 0.3 }
       }}
       style={{ perspective: "1000px" }}
@@ -173,53 +101,6 @@ const CentralAIBrain: React.FC<{ isInView: boolean }> = ({ isInView }) => {
             rotateZ: 5,
           }}
         >
-          <svg
-            className="absolute inset-1 sm:inset-2 w-12 h-12 sm:w-14 md:w-15 lg:w-16 sm:h-14 md:h-15 lg:h-16 opacity-60"
-            viewBox="0 0 100 100"
-            fill="none"
-          >
-            <motion.path
-              d="M20,20 Q50,10 80,20 T80,80 Q50,90 20,80 T20,20"
-              stroke="url(#neuralGrad)"
-              strokeWidth="1"
-              fill="none"
-              initial={{ pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{ duration: 3, delay: 2 }}
-            />
-            <motion.path
-              d="M30,30 L70,70 M70,30 L30,70"
-              stroke="url(#neuralGrad)"
-              strokeWidth="0.8"
-              initial={{ pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{ duration: 2, delay: 2.5 }}
-            />
-            {Array.from({ length: 6 }).map((_, i) => (
-              <motion.circle
-                key={i}
-                cx={25 + (i % 3) * 25}
-                cy={25 + Math.floor(i / 3) * 25}
-                r="3"
-                fill="#06b6d4"
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 0.8 }}
-                transition={{ 
-                  duration: 0.5, 
-                  delay: 2 + i * 0.1,
-                  type: "spring"
-                }}
-              />
-            ))}
-            <defs>
-              <linearGradient id="neuralGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#3b82f6" />
-                <stop offset="50%" stopColor="#8b5cf6" />
-                <stop offset="100%" stopColor="#06b6d4" />
-              </linearGradient>
-            </defs>
-          </svg>
-
           <motion.div
             className="relative z-10 text-slate-700 font-bold tracking-wider text-center"
             animate={{
@@ -236,7 +117,7 @@ const CentralAIBrain: React.FC<{ isInView: boolean }> = ({ isInView }) => {
               textShadow: '0 0 10px rgba(6, 182, 212, 0.8)'
             }}
           >
-            EQUILIBRATE
+            EQUILIBRATE.AI
           </motion.div>
         </motion.div>
 
@@ -446,12 +327,9 @@ function EnhancedNetworkNode({
   const isInView = useInView(ref, { once: true, margin: "-50px" });
   const [isHovered, setIsHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const p = genRandomPattern();
 
   const isTopNode = index < 3;
-  const isBottomNode = index >= 3;
 
-  // Track window size to determine mobile
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth <= 640);
     checkMobile();
@@ -463,13 +341,11 @@ function EnhancedNetworkNode({
     hidden: {
       opacity: 0,
       scale: 0,
-      rotateY: -180,
       filter: "blur(10px)",
     },
     visible: {
       opacity: 1,
       scale: 1,
-      rotateY: 0,
       filter: "blur(0px)",
       transition: {
         type: "spring",
@@ -484,9 +360,7 @@ function EnhancedNetworkNode({
   return (
     <motion.div
       ref={ref}
-      className={`absolute transform -translate-x-1/2 -translate-y-1/2 group cursor-pointer ${
-        isBottomNode ? 'z-50' : 'z-40'
-      } ${isHovered ? 'z-[60]' : ''}`}
+      className="absolute transform -translate-x-1/2 -translate-y-1/2 group cursor-pointer z-40"
       style={{
         left: `${position.x}%`,
         top: `${position.y}%`,
@@ -496,7 +370,6 @@ function EnhancedNetworkNode({
       animate={isInView ? "visible" : "hidden"}
       whileHover={{
         scale: 1.1,
-        rotateY: 8,
         zIndex: 100,
         transition: {
           type: "spring",
@@ -508,20 +381,6 @@ function EnhancedNetworkNode({
       onMouseLeave={() => setIsHovered(false)}
       {...props}
     >
-      {/* Professional subtle glow */}
-      <motion.div
-        className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-100/30 to-slate-100/30 blur-xl opacity-0 group-hover:opacity-60"
-        animate={{
-          scale: [1, 1.2, 1],
-          opacity: isInView ? [0.1, 0.15, 0.1] : 0,
-        }}
-        transition={{
-          duration: 6,
-          repeat: Infinity,
-          delay: index * 0.6,
-        }}
-      />
-
       <motion.div
         className="relative w-20 h-20 sm:w-24 md:w-28 lg:w-32 sm:h-24 md:h-28 lg:h-32 transform-gpu"
         whileHover={{
@@ -529,43 +388,7 @@ function EnhancedNetworkNode({
           rotateZ: 3,
         }}
       >
-        {/* Professional card design */}
         <div className="absolute inset-0 bg-white/95 backdrop-blur-lg rounded-2xl border border-gray-200/80 shadow-lg group-hover:border-blue-200/80 group-hover:shadow-blue-100/20 transition-all duration-300">
-          
-          {/* Subtle grid pattern */}
-          <motion.div
-            className="pointer-events-none absolute inset-0 opacity-10"
-            initial={{ opacity: 0 }}
-            animate={isInView ? { opacity: 0.1 } : { opacity: 0 }}
-            transition={{ duration: 1, delay: index * 0.1 + 0.2 }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-br from-gray-50/40 via-blue-50/20 to-slate-50/30 rounded-2xl">
-              <GridPattern
-                width={16}
-                height={16}
-                x="-8"
-                y="2"
-                squares={p}
-                className="absolute inset-0 h-full w-full mix-blend-soft-light opacity-60"
-              />
-            </div>
-          </motion.div>
-
-          {/* Professional shimmer effect */}
-          <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent rounded-2xl"
-            animate={{
-              x: ["-100%", "200%"],
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              delay: index * 0.8,
-              ease: "easeInOut"
-            }}
-          />
-
-          {/* Icon container */}
           <div className="absolute inset-0 flex items-center justify-center">
             <motion.div
               className="relative z-10 p-3 sm:p-4 lg:p-5 rounded-xl bg-gradient-to-br from-gray-50 to-blue-50/80 border border-gray-100 shadow-sm flex items-center justify-center"
@@ -585,16 +408,9 @@ function EnhancedNetworkNode({
               />
             </motion.div>
           </div>
-
-          {/* Professional corner accents */}
-          <div className="absolute top-2 left-2 w-2 h-2 sm:w-3 sm:h-3 border-t border-l border-blue-300/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-tl" />
-          <div className="absolute top-2 right-2 w-2 h-2 sm:w-3 sm:h-3 border-t border-r border-blue-300/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-tr" />
-          <div className="absolute bottom-2 left-2 w-2 h-2 sm:w-3 sm:h-3 border-b border-l border-blue-300/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-bl" />
-          <div className="absolute bottom-2 right-2 w-2 h-2 sm:w-3 sm:h-3 border-b border-r border-blue-300/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-br" />
         </div>
       </motion.div>
 
-      {/* Professional tooltip - only show title */}
       <motion.div
         className={`absolute left-1/2 transform -translate-x-1/2 pointer-events-none z-[70] ${
           isMobile ? 'bottom-full mb-4 sm:mb-6' : 
@@ -615,53 +431,15 @@ function EnhancedNetworkNode({
           stiffness: 300,
           damping: 25,
         }}
-        style={{ zIndex: 9999 }}
       >
-        <div className="bg-white/95 backdrop-blur-lg border border-gray-200/80 rounded-xl px-4 py-3 shadow-lg shadow-gray-500/10 max-w-xs">
+        <div className="bg-white/95 backdrop-blur-lg border border-gray-200/80 rounded-xl px-4 py-3 pb-3 shadow-lg shadow-gray-500/10 max-w-sm">
           <div className="text-slate-800 font-semibold text-sm text-center">
             {feature.title}
           </div>
-          
-          {/* Professional arrow */}
-          <div className={`absolute left-1/2 transform -translate-x-1/2 ${
-            isMobile ? 'top-full' :
-            isTopNode ? 'top-full' : 'bottom-full'
-          }`}>
-            {(isMobile || isTopNode) ? (
-              <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-white/95" />
-            ) : (
-              <div className="w-0 h-0 border-l-4 border-r-4 border-b-4 border-l-transparent border-r-transparent border-b-white/95" />
-            )}
-          </div>
         </div>
       </motion.div>
-
-      {/* Subtle pulse effect */}
-      <motion.div
-        className="absolute inset-0 rounded-2xl"
-        animate={{
-          boxShadow: [
-            "0 0 0 0 rgba(59, 130, 246, 0)",
-            "0 0 0 8px rgba(59, 130, 246, 0.05)",
-            "0 0 0 0 rgba(59, 130, 246, 0)",
-          ],
-        }}
-        transition={{
-          duration: 4,
-          repeat: Infinity,
-          delay: index * 0.8,
-        }}
-      />
     </motion.div>
   );
-}
-
-interface HeroSectionProps {
-  brandName?: string;
-  mainTitle?: string;
-  description?: string;
-  services?: string[];
-  features?: FeatureType[];
 }
 
 const containerVariants: Variants = {
@@ -687,7 +465,7 @@ const itemVariants: Variants = {
   },
 };
 
-export const HeroSectionThree: React.FC<HeroSectionProps> = (props) => {
+export const HeroSectionThree: React.FC = () => {
   const containerRef = useRef(null);
   const isInView = useInView(containerRef, { once: true, margin: "-100px" });
   const { scrollYProgress } = useScroll({
@@ -696,17 +474,8 @@ export const HeroSectionThree: React.FC<HeroSectionProps> = (props) => {
   });
 
   const y = useTransform(scrollYProgress, [0, 1], [0, -50]);
-  
-  const [windowWidth, setWindowWidth] = useState(0);
-  
-  useEffect(() => {
-    setWindowWidth(window.innerWidth);
-    const handleResize = () => setWindowWidth(window.innerWidth);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
-  const features = props.features ?? [
+  const features = [
     {
       title: "Accessible Innovation",
       icon: Zap,
@@ -754,106 +523,9 @@ export const HeroSectionThree: React.FC<HeroSectionProps> = (props) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.7 }}
-      className="overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/20 to-purple-50/20"
+      className="overflow-visible"
       style={{ y }}
     >
-      <div className="absolute inset-0">
-        <GridPattern
-          width={32}
-          height={32}
-          x="0"
-          y="0"
-          squares={Array.from({ length: 25 }, () => [
-            Math.floor(Math.random() * 20),
-            Math.floor(Math.random() * 20),
-          ])}
-          className="w-full h-full opacity-30"
-        />
-      </div>
-
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(59,130,246,0.08)_0%,transparent_50%)] opacity-70" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_60%,rgba(139,92,246,0.06)_0%,transparent_50%)] opacity-60" />
-      
-      <motion.div
-        className="absolute inset-0 opacity-20"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.2 }}
-        transition={{ duration: 2 }}
-      >
-        {Array.from({ length: windowWidth < 768 ? 10 : 15 }).map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute opacity-40"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              y: [0, -25, 0],
-              x: [0, Math.random() * 15 - 7, 0],
-              scale: [0, 1, 0],
-              opacity: [0, 0.4, 0],
-            }}
-            transition={{
-              duration: 5 + Math.random() * 3,
-              repeat: Infinity,
-              delay: Math.random() * 4,
-              ease: "easeInOut",
-            }}
-          >
-            <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 text-blue-400" />
-          </motion.div>
-        ))}
-        
-        {Array.from({ length: 8 }).map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-blue-300/50 rounded-full"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              y: [0, -30, 0],
-              x: [0, Math.random() * 20 - 10, 0],
-              opacity: [0.2, 0.6, 0.2],
-            }}
-            transition={{
-              duration: 6 + Math.random() * 3,
-              repeat: Infinity,
-              delay: Math.random() * 2,
-              ease: "easeInOut",
-            }}
-          />
-        ))}
-
-        {Array.from({ length: 4 }).map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute"
-            style={{
-              left: `${25 + i * 20}%`,
-              top: `${15 + Math.random() * 70}%`,
-            }}
-            animate={{
-              rotate: [0, 360],
-              y: [0, -20, 0],
-              scale: [1, 1.2, 1],
-            }}
-            transition={{
-              duration: 10 + i * 2,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-          >
-            <div
-              className={`w-2 h-2 sm:w-3 sm:h-3 bg-gradient-to-br from-blue-300/25 to-purple-300/25 
-                         ${i % 2 === 0 ? "rounded-full" : "rounded rotate-45"}`}
-            />
-          </motion.div>
-        ))}
-      </motion.div>
-
       <motion.div
         className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16"
         initial="hidden"
@@ -865,25 +537,23 @@ export const HeroSectionThree: React.FC<HeroSectionProps> = (props) => {
           variants={itemVariants}
         >
           <motion.h2
-            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black mb-4 sm:mb-6 lg:mb-8 leading-tight"
-            whileHover={{ scale: 1.02 }}
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black mb-4 sm:mb-6 lg:mb-8 leading-tight overflow-hidden"
           >
             {"Why Equilibrate Leads the Future".split(" ").map((word, i) => (
               <motion.span
                 key={i}
-                className="inline-block mr-2 sm:mr-3 lg:mr-4 text-slate-800 bg-clip-text"
-                initial={{ opacity: 0, rotateX: -90 }}
-                whileInView={{ opacity: 1, rotateX: 0 }}
+                className="inline-block mr-2 sm:mr-3 lg:mr-4 bg-gradient-to-r from-gray-900 via-slate-800 to-gray-900 bg-clip-text text-transparent transition-colors duration-200 ease-out hover:bg-gradient-to-r hover:from-violet-600 hover:via-blue-600 hover:to-cyan-500"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{
                   duration: 0.8,
-                  delay: i * 0.1,
+                  delay: i * 0.08,
                   ease: [0.25, 0.46, 0.45, 0.94],
                 }}
                 whileHover={{
-                  y: -5,
-                  scale: 1.05,
-                  transition: { duration: 0.2 },
+                  y: -3,
+                  transition: { duration: 0.18 },
                 }}
               >
                 {word}
@@ -925,5 +595,3 @@ export const HeroSectionThree: React.FC<HeroSectionProps> = (props) => {
     </motion.section>
   );
 };
-
-export default HeroSectionThree;

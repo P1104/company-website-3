@@ -13,30 +13,43 @@ function preload() {
   window.spriteSheetImage.src = "/mario/assets/sprites/blore_sprite5.png";
   window.tilesetImage.src = "/mario/assets/sprites/tileset_gutter_update.png";
 
-  return new Promise((resolve, reject) => {
-    const loadImage = (img, name) =>
-      new Promise((res) => {
-        img.addEventListener("load", () => {
-          console.log(`${name} loaded`);
-          res();
-        });
-        img.addEventListener("error", () => {
-          console.error(`❌ Failed to load: ${img.src}`);
-          res(); // Still resolve to continue
-        });
-      });
-
-    Promise.all([
-      loadImage(window.castleImage, "castle"),
-      loadImage(window.cloudsImage, "clouds"),
-      loadImage(window.mountainImage, "mountains"),
-      loadImage(window.spriteSheetImage, "spritesheet"),
-      loadImage(window.tilesetImage, "tileset"),
-    ])
-      .then(resolve)
-      .catch(reject);
-  });
-}
+return new Promise(function(resolve,reject){
+        let p1= new Promise(function(resolve,reject){
+            castleImage.addEventListener("load",function(){
+                console.log("Image loaded");
+                resolve();
+            });
+        })
+        let p2= new Promise(function(resolve,reject){
+            cloudsImage.addEventListener("load",function(){
+                console.log("Image loaded");
+                resolve(); 
+            });
+        })
+        let p3= new Promise(function(resolve ,reject){
+            mountainImage.addEventListener("load",function(){
+                console.log("Image loaded");
+                resolve();
+            });
+        })
+        let p4= new Promise(function(resolve,reject){
+            spriteSheetImage.addEventListener("load",function(){
+                console.log("Image loaded");
+                resolve();
+            });
+        })
+        let p5= new Promise(function(resolve,reject){
+            tilesetImage.addEventListener("load",function(){
+                console.log("Image loaded");
+                resolve();
+            });
+        })
+        let BigPromise=Promise.all([p1,p2,p3,p4,p5]);
+        BigPromise.then(function(){
+            resolve();
+        })
+    })
 
 // Make preload available globally
 window.preload = preload;
+  }

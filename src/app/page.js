@@ -1,4 +1,4 @@
-// MarioGamePage.tsx - Complete code with Tech Summit Modal
+// MarioGamePage.tsx - FIXED: Complete restart and countdown handling
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -19,12 +19,12 @@ export default function MarioGamePage() {
   const [character] = useState("mario");
   const [difficulty] = useState("normal");
   const [score, setScore] = useState(0);
-  const [setCoins] = useState(0);
+  const [ setCoins] = useState(0);
   const [finalScore, setFinalScore] = useState(0);
   const [finalCoins, setFinalCoins] = useState(0);
   const [gameLoaded, setGameLoaded] = useState(false);
   const [showSummitModal, setShowSummitModal] = useState(false);
-  const [previousGameState, setPreviousGameState] = useState("start");
+  const [isNavigatingHome, setIsNavigatingHome] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -78,7 +78,7 @@ export default function MarioGamePage() {
         window.gameObj.camera.width = vw / scale;
       }
       console.log(
-        `📐 Resized: ${vw}x${vh}, scale: ${scale}, mobile: ${isMobileDevice}`
+        `🔧 Resized: ${vw}x${vh}, scale: ${scale}, mobile: ${isMobileDevice}`
       );
     };
 
@@ -108,7 +108,7 @@ export default function MarioGamePage() {
   useEffect(() => {
     const handleScoreUpdate = (e) => {
       const detail = e.detail || {};
-      console.log("📊 Score update:", detail);
+      console.log("📊 Score update received:", detail);
       setScore(detail.score || 0);
       setCoins(detail.coins || 0);
     };
@@ -221,7 +221,7 @@ export default function MarioGamePage() {
 
       script.onload = () => {
         loadedCount++;
-        console.log(`✔ ${loadedCount}/${scripts.length}: ${scripts[index]}`);
+        console.log(`✓ ${loadedCount}/${scripts.length}: ${scripts[index]}`);
         loadNextScript(index + 1);
       };
 
@@ -252,81 +252,167 @@ export default function MarioGamePage() {
   };
 
   const handleCountdownComplete = () => {
-    console.log("⏱️ Countdown complete, starting game");
+    console.log("⏱️ Countdown complete, initializing game...");
 
     const canvas = document.getElementById("screen");
     if (!canvas) {
-      console.error("Canvas not found!");
+      console.error("❌ Canvas not found!");
       return;
     }
 
     const isMobileDevice = window.innerWidth <= 768;
     const scale = isMobileDevice ? 1.8 : 3.1;
 
+    // Set canvas dimensions
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
+    // Get fresh context and apply scale
     const newTool = canvas.getContext("2d");
-    newTool.setTransform(1, 0, 0, 1, 0, 0);
+    newTool.setTransform(1, 0, 0, 1, 0, 0); // Reset transform matrix
     newTool.scale(scale, scale);
 
+    console.log(`✅ Canvas initialized: ${canvas.width}x${canvas.height}, scale: ${scale}`);
+
+    // Update or create game object
     if (window.gameObj) {
+      console.log("♻️ Updating existing gameObj...");
       window.gameObj.tool = newTool;
       window.gameObj.canvas = canvas;
       window.gameObj.camera.width = window.innerWidth / scale;
       window.gameObj.levelComplete = false;
-      console.log("✅ Canvas context refreshed for restart");
+      window.gameObj.userControl = false;
+
+      // Ensure level is properly set up
+      if (!window.gameObj.entities.scenery || window.gameObj.entities.scenery.length === 0) {
+        console.log("🏗️ Rebuilding level scenery...");
+        if (window.gameObj.levelBuilder) {
+          window.gameObj.levelBuilder.stock(window.gameObj);
+        }
+      }
+
+      // Render initial frame
+      if (window.render && window.render.init) {
+        console.log("🎨 Rendering initial frame...");
+        window.render.init(window.gameObj);
+      }
+    } else {
+      console.error("❌ gameObj not found! Game may not be initialized.");
+      return;
     }
 
+    // Start the game
     if (window.gameInstance?.startWithSettings) {
+      console.log("🎮 Starting game with settings...");
       window.gameInstance.startWithSettings(character, difficulty);
       setGameState("playing");
+    } else {
+      console.error("❌ gameInstance.startWithSettings not found!");
     }
   };
 
   const handleRestart = () => {
-    console.log("🔄 Restarting game");
+    console.log("🔄 Restarting game - Canceling animation frame...");
+    
+    // Cancel any running animation frame
     if (window.gameInstance?._raf) {
       cancelAnimationFrame(window.gameInstance._raf);
+      window.gameInstance._raf = null;
     }
+
+    // Clear canvas
+    const canvas = document.getElementById("screen");
+    if (canvas) {
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    // Reset score display
     setScore(0);
     setCoins(0);
     setFinalScore(0);
     setFinalCoins(0);
+
+    // Reset game object state
+    if (window.gameObj) {
+      console.log("🔧 Resetting game object...");
+      window.gameObj.levelComplete = false;
+      window.gameObj.lives = 3;
+      window.gameObj.score = 0;
+      window.gameObj.coins = 0;
+      window.gameObj.userControl = false;
+      window.gameObj.animFrame = 0;
+      
+      // Reset Mario
+      if (window.gameObj.entities.mario) {
+        const mario = window.gameObj.entities.mario;
+        mario.posX = 50;
+        mario.posY = 174;
+        mario.velX = 0;
+        mario.velY = 0;
+        mario.pointer = "idle";
+        mario.currentDirection = "right";
+        if (mario.states && mario.states.standingAnim) {
+          mario.currentState = mario.states.standingAnim;
+        }
+      }
+
+      // Clear enemies but keep them in arrays
+      window.gameObj.entities.goombas.forEach((goomba) => {
+        goomba.posY = 500; // Move off screen
+      });
+      window.gameObj.entities.koopas.forEach((koopa) => {
+        koopa.posY = 500; // Move off screen
+      });
+      
+      // Reset camera
+      window.gameObj.camera.start = 0;
+
+      // Rebuild level
+      if (window.gameObj.levelBuilder && window.levelOne) {
+        console.log("🏗️ Rebuilding level...");
+        window.gameObj.entities.scenery = [];
+        window.gameObj.entities.particles = [];
+        window.gameObj.entities.coins = [];
+        window.gameObj.entities.mushrooms = [];
+        window.gameObj.entities.blocks = [];
+        window.gameObj.entities.bricks = [];
+        
+        // Reinitialize level
+        const LevelBuilder = window.LevelBuilder;
+        if (LevelBuilder) {
+          window.gameObj.levelBuilder = new LevelBuilder(window.levelOne);
+          window.gameObj.levelBuilder.stock(window.gameObj);
+        }
+      }
+    }
+
+    console.log("✅ Game state reset, moving to countdown");
     setGameState("countdown");
   };
 
   const handleNavigateHome = () => {
-    console.log("🏠 Opening Tech Summit Modal from state:", gameState);
+    console.log("🌐 Navigate Home triggered");
     
-    // Pause the game if it's running
     if (window.gameInstance?._raf) {
       cancelAnimationFrame(window.gameInstance._raf);
     }
-    
-    // Store the current state before opening modal
-    setPreviousGameState(gameState);
-    
-    // Open the modal
+
+    setIsNavigatingHome(true);
     setShowSummitModal(true);
-    
-    console.log("✅ Tech Summit Modal should now be visible");
   };
 
   const handleSummitModalClose = () => {
-    console.log("❌ Closing Tech Summit Modal, returning to:", previousGameState);
+    console.log("✌️ Closing Tech Summit Modal");
     setShowSummitModal(false);
-    // Don't navigate, just close the modal and stay on current state
+    setIsNavigatingHome(false);
   };
 
   const handleSummitModalNavigate = () => {
-    console.log("➡️ Navigating to home page - Current path:", window.location.pathname);
-    console.log("➡️ Router object:", router);
-    setShowSummitModal(false);
+    console.log("➡️ Tech Summit Modal closed - Navigating to home page");
     
-    // Small delay to ensure modal closes smoothly
     setTimeout(() => {
-      console.log("➡️ Executing router.push('/')");
+      console.log("➡️ Executing router.push('/home')");
       router.push("/home");
     }, 100);
   };
@@ -347,8 +433,6 @@ export default function MarioGamePage() {
       }
     }
   };
-
-  console.log("🎨 Rendering with gameState:", gameState, "showSummitModal:", showSummitModal);
 
   const showCanvas = gameState === "playing";
   const showHUD = gameState === "playing";
@@ -449,20 +533,6 @@ export default function MarioGamePage() {
         html {
           overscroll-behavior-y: none;
         }
-
-        @media screen and (orientation: portrait) {
-          body::before {
-            content: "";
-            display: none;
-          }
-        }
-
-        @media screen and (orientation: landscape) {
-          body::before {
-            content: "";
-            display: none;
-          }
-        }
       `}</style>
 
       <div
@@ -528,7 +598,7 @@ export default function MarioGamePage() {
           </div>
         )}
 
-        {gameState === "start" && !showSummitModal && (
+        {gameState === "start" && !showSummitModal && !isNavigatingHome && (
           <StartModal
             onStart={handleStart}
             onNavigateHome={handleNavigateHome}
@@ -537,14 +607,14 @@ export default function MarioGamePage() {
           />
         )}
 
-        {gameState === "countdown" && !showSummitModal && (
+        {gameState === "countdown" && !showSummitModal && !isNavigatingHome && (
           <CountdownModal
             onCountdownComplete={handleCountdownComplete}
             isMobile={isMobile}
           />
         )}
 
-        {gameState === "gameOver" && !showSummitModal && (
+        {gameState === "gameOver" && !showSummitModal && !isNavigatingHome && (
           <GameOverModal
             finalScore={finalScore}
             finalCoins={finalCoins}
@@ -554,7 +624,7 @@ export default function MarioGamePage() {
           />
         )}
 
-        {gameState === "success" && !showSummitModal && (
+        {gameState === "success" && !showSummitModal && !isNavigatingHome && (
           <SuccessModal
             finalScore={finalScore}
             finalCoins={finalCoins}
@@ -564,7 +634,6 @@ export default function MarioGamePage() {
           />
         )}
 
-        {/* Tech Summit Modal - renders on top of everything when open */}
         <TechSummitModal
           isOpen={showSummitModal}
           onClose={handleSummitModalClose}

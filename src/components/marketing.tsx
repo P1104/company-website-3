@@ -1,13 +1,12 @@
+// File: src/components/marketing/marketing.tsx
 "use client";
 
-import {
-  motion
-} from "framer-motion";
+import { motion } from "framer-motion";
 import Image from "next/image";
 
 export function Marketing() {
   return (
-    <div className="mb-24 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/20 to-purple-50/20 relative z-10 py-16 px-4">
+    <div className="overflow-hidden bg-transparent relative z-10 py-16 px-4">
       <motion.div
         className="max-w-7xl mx-auto text-center"
         initial={{ opacity: 0, y: 20 }}
@@ -17,7 +16,7 @@ export function Marketing() {
       >
         {/* Section Header */}
         <motion.h2
-          className="mx-auto text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black mb-4 sm:mb-6 lg:mb-8 leading-tight"
+          className="mx-auto text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 sm:mb-6 lg:mb-8 leading-tight overflow-hidden"
           whileHover={{ scale: 1.02 }}
         >
           {"Delivering impactful digital solutions"
@@ -25,19 +24,18 @@ export function Marketing() {
             .map((word, i) => (
               <motion.span
                 key={i}
-                className="inline-block mr-2 sm:mr-3 lg:mr-4 text-slate-800 bg-clip-text"
-                initial={{ opacity: 0, rotateX: -90 }}
-                whileInView={{ opacity: 1, rotateX: 0 }}
+                className="inline-block mr-2 sm:mr-3 lg:mr-4 bg-gradient-to-r from-gray-900 via-slate-800 to-gray-900 bg-clip-text text-transparent transition-colors duration-200 ease-out hover:bg-gradient-to-r hover:from-violet-600 hover:via-blue-600 hover:to-cyan-500"
+                initial={{ opacity: 0, rotateY: 90 }}
+                whileInView={{ opacity: 1, rotateY: 0 }}
                 viewport={{ once: true }}
                 transition={{
-                  duration: 0.8,
-                  delay: i * 0.1,
+                  duration: 0.6,
+                  delay: i * 0.08,
                   ease: [0.25, 0.46, 0.45, 0.94],
                 }}
                 whileHover={{
-                  y: -5,
-                  scale: 1.05,
-                  transition: { duration: 0.2 },
+                  y: -3,
+                  transition: { duration: 0.18 },
                 }}
               >
                 {word}
@@ -105,29 +103,14 @@ export function Marketing() {
                     transition={{ duration: 0.2 }}
                   >
                     <div className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center text-white font-semibold text-sm shadow-sm">
-                      <Image
-                        width={100}
-                        height={100}
-                        src="/karnataka.png"
-                        alt="Karnataka Government Logo"
-                        className="w-full h-full object-contain p-2"
-                        onError={(e) => {
-                          e.currentTarget.style.display = "none";
-                          const fallback = e.currentTarget
-                            .nextElementSibling as HTMLElement;
-                          if (fallback) fallback.style.display = "flex";
-                        }}
-                      />
-                      <div
-                        className="w-full h-full hidden items-center justify-center text-center p-2"
-                        style={{ display: "none" }}
-                      >
-                        <div>
-                          <div className="text-xs font-semibold mb-1">
-                            KARNATAKA
-                          </div>
-                          <div className="text-xs">GOVERNMENT</div>
-                        </div>
+                      <div className="w-full h-full flex items-center justify-center text-center p-2">
+                        <Image
+                          className="text-xs font-semibold mb-1"
+                          src={"/karnataka.png"}
+                          alt={"logo"}
+                          width={100}
+                          height={100}
+                        />
                       </div>
                     </div>
                   </motion.div>
@@ -206,10 +189,10 @@ export function Marketing() {
                       viewport={{ once: true }}
                       transition={{ duration: 0.4, delay: 0.8 }}
                     >
-                      1.5+
+                      150K+
                     </motion.div>
                     <div className="text-lg font-medium text-blue-700 mb-2">
-                      Lakh Users
+                      Users
                     </div>
                     <div className="text-base font-semibold text-slate-800 mb-2">
                       Successfully Served

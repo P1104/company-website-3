@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
-import { X, MapPin, Calendar, ExternalLink } from 'lucide-react';
+import { useState } from "react";
+import { X, MapPin, Calendar, ExternalLink } from "lucide-react";
+import Image from "next/image";
 
 interface TechSummitModalProps {
   isOpen: boolean;
@@ -7,60 +8,25 @@ interface TechSummitModalProps {
   onNavigate: () => void;
 }
 
-export default function TechSummitModal({ isOpen, onClose, onNavigate }: TechSummitModalProps) {
-  const [countdown, setCountdown] = useState(10);
-
-  useEffect(() => {
-    if (!isOpen) return;
-
-    setCountdown(10);
-
-    const navigateTimer = setTimeout(() => {
-      onNavigate();
-    }, 10000);
-
-    const countdownInterval = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          clearInterval(countdownInterval);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => {
-      clearTimeout(navigateTimer);
-      clearInterval(countdownInterval);
-    };
-  }, [isOpen, onNavigate]);
+export default function TechSummitModal({
+  isOpen,
+  onClose,
+  onNavigate,
+}: TechSummitModalProps) {
+  const [isNavigating, setIsNavigating] = useState(false);
 
   if (!isOpen) return null;
 
+  const handleNavigate = () => {
+    setIsNavigating(true);
+    setTimeout(() => {
+      onNavigate();
+    }, 200);
+  };
+
   return (
-    <div
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        backdropFilter: 'blur(10px)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 9999,
-        padding: '20px',
-        animation: 'fadeIn 0.3s ease-out',
-      }}
-      onClick={onClose}
-    >
+    <>
       <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
         @keyframes slideUp {
           from {
             opacity: 0;
@@ -71,12 +37,12 @@ export default function TechSummitModal({ isOpen, onClose, onNavigate }: TechSum
             transform: translateY(0) scale(1);
           }
         }
-        @keyframes shimmer {
-          0% {
-            background-position: -1000px 0;
+        @keyframes fadeInOut {
+          from {
+            opacity: 1;
           }
-          100% {
-            background-position: 1000px 0;
+          to {
+            opacity: 0;
           }
         }
         @keyframes float {
@@ -87,287 +53,311 @@ export default function TechSummitModal({ isOpen, onClose, onNavigate }: TechSum
             transform: translateY(-10px);
           }
         }
+        .tech-summit-backdrop {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(244, 241, 241, 1);
+          backdrop-filter: blur(12px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 99999;
+          padding: 20px;
+          overflow: hidden;
+          
+        }
+        .tech-summit-grid {
+          position: absolute;
+          inset: 0;
+          opacity: 0.15;
+          pointer-events: none;
+          background-image: 
+            linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px);
+          background-size: 60px 60px;
+        }
+        .tech-summit-modal-card {
+          background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(240, 147, 251, 0.2) 100%);
+          border-radius: 24px;
+          padding: 3px;
+          max-width: 500px;
+          width: 100%;
+          box-shadow: 0 25px 80px rgba(102, 126, 234, 0.3), 0 0 60px rgba(240, 147, 251, 0.2);
+          border: 2px solid rgba(226, 232, 240, 0.4);
+          position: relative;
+          z-index: 10;
+          animation: slideUp 0.4s ease-out;
+        }
+        .tech-summit-content {
+          background: linear-gradient(135deg, rgba(248, 250, 252, 0.98) 0%, rgba(241, 245, 249, 0.98) 100%);
+          border-radius: 22px;
+          padding: 32px 24px;
+          position: relative;
+          overflow: hidden;
+        }
+        .tech-summit-close-btn {
+          position: absolute;
+          top: 12px;
+          right: 12px;
+          background: linear-gradient(135deg, rgba(96, 165, 250, 0.2), rgba(168, 85, 247, 0.2));
+          border: 2px solid rgba(96, 165, 250, 0.3);
+          border-radius: 50%;
+          width: 40px;
+          height: 40px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: all 0.2s;
+          color: #3b82f6;
+          z-index: 10;
+        }
+        .tech-summit-close-btn:hover {
+          transform: scale(1.1) rotate(90deg);
+        }
+        .tech-summit-logo {
+          display: flex;
+          justify-content: center;
+          margin-bottom: 16px;
+          animation: float 3s ease-in-out infinite;
+        }
+        .tech-summit-logo-box {
+          width: 80px;
+          height: 80px;
+          border-radius: 16px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+          font-size: 36px;
+          font-weight: bold;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+          color: white;
+          border: 3px solid rgba(226, 232, 240, 0.3);
+          transition: transform 0.2s;
+        }
+        .tech-summit-logo-box:hover {
+          transform: scale(1.1);
+        }
+        .tech-summit-title {
+          font-size: 28px;
+          font-weight: bold;
+          background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          text-align: center;
+          margin-bottom: 20px;
+          letter-spacing: 1px;
+        }
+        .tech-summit-invitation {
+          background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(240, 147, 251, 0.15) 100%);
+          border-radius: 12px;
+          padding: 20px;
+          margin-bottom: 20px;
+          border: 2px solid rgba(102, 126, 234, 0.3);
+        }
+        .tech-summit-invitation-title {
+          font-size: 18px;
+          font-weight: 700;
+          background: linear-gradient(90deg, #000000, #000000);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          text-align: center;
+          margin-bottom: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+        }
+        .tech-summit-invitation-text {
+          font-size: 14px;
+          color: #475569;
+          text-align: center;
+          line-height: 1.5;
+          font-weight: 500;
+        }
+        .tech-summit-details {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          margin-bottom: 20px;
+        }
+        .tech-summit-detail-item {
+          background: linear-gradient(135deg, rgba(96, 165, 250, 0.1), rgba(168, 85, 247, 0.08));
+          border-radius: 10px;
+          padding: 12px;
+          display: flex;
+          align-items: flex-start;
+          gap: 10px;
+          border: 2px solid rgba(96, 165, 250, 0.2);
+          transition: transform 0.2s;
+        }
+        .tech-summit-detail-item:hover {
+          transform: translateX(5px);
+        }
+        .tech-summit-detail-item.dates {
+          background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(240, 147, 251, 0.08));
+          border-color: rgba(168, 85, 247, 0.2);
+        }
+        .tech-summit-detail-icon {
+          color: #3b82f6;
+          margin-top: 2px;
+          flex-shrink: 0;
+        }
+        .tech-summit-detail-dates .tech-summit-detail-icon {
+          color: #8b5cf6;
+        }
+        .tech-summit-detail-label {
+          font-size: 12px;
+          color: #64748b;
+          margin-bottom: 4px;
+          font-weight: 600;
+        }
+        .tech-summit-detail-value {
+          font-size: 13px;
+          color: #1e293b;
+          font-weight: 600;
+          line-height: 1.4;
+        }
+        .tech-summit-buttons {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+        .tech-summit-btn {
+          padding: 14px 20px;
+          border-radius: 10px;
+          font-size: 15px;
+          font-weight: bold;
+          text-align: center;
+          border: none;
+          cursor: pointer;
+          transition: all 0.3s;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          text-decoration: none;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+          color: white;
+          box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        .tech-summit-btn:hover {
+          transform: scale(1.02) translateY(-2px);
+        }
+        .tech-summit-btn:active {
+          transform: scale(0.98);
+        }
+        .tech-summit-btn-secondary {
+          background: linear-gradient(135deg, rgba(96, 165, 250, 0.2), rgba(168, 85, 247, 0.2));
+          color: #3b82f6;
+          border: 2px solid rgba(96, 165, 250, 0.4);
+          box-shadow: none;
+        }
+        .tech-summit-btn-secondary:hover {
+          background: linear-gradient(135deg, rgba(96, 165, 250, 0.3), rgba(168, 85, 247, 0.3));
+        }
       `}</style>
 
-      <div
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
-          borderRadius: '20px',
-          padding: '2px',
-          maxWidth: '480px',
-          width: '100%',
-          boxShadow: '0 20px 60px rgba(102, 126, 234, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1)',
-          position: 'relative',
-          animation: 'slideUp 0.4s ease-out',
-        }}
-      >
+      <div className="tech-summit-backdrop" onClick={onClose}>
+        <div className="tech-summit-grid" />
+
         <div
-          style={{
-            background: 'linear-gradient(180deg, #1e1b4b 0%, #0f172a 100%)',
-            borderRadius: '18px',
-            padding: '32px 24px',
-            position: 'relative',
-            overflow: 'hidden',
-          }}
+          className="tech-summit-modal-card"
+          onClick={(e) => e.stopPropagation()}
         >
-          {/* Decorative background elements */}
-          <div
-            style={{
-              position: 'absolute',
-              top: '-50%',
-              right: '-50%',
-              width: '200%',
-              height: '200%',
-              background: 'radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%)',
-              pointerEvents: 'none',
-            }}
-          />
-
-          {/* Close Button */}
-          <button
-            onClick={onClose}
-            style={{
-              position: 'absolute',
-              top: '12px',
-              right: '12px',
-              background: 'rgba(255, 255, 255, 0.1)',
-              border: 'none',
-              borderRadius: '50%',
-              width: '32px',
-              height: '32px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-              color: 'rgba(255, 255, 255, 0.8)',
-              zIndex: 10,
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
-              e.currentTarget.style.transform = 'scale(1.1) rotate(90deg)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
-              e.currentTarget.style.transform = 'scale(1) rotate(0deg)';
-            }}
-          >
-            <X size={18} />
-          </button>
-
-          {/* Company Logo */}
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              marginBottom: '16px',
-              animation: 'float 3s ease-in-out infinite',
-            }}
-          >
+          <div className="tech-summit-content">
             <div
               style={{
-                width: '80px',
-                height: '80px',
-                borderRadius: '16px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0 8px 24px rgba(240, 147, 251, 0.3)',
-                fontSize: '36px',
-                fontWeight: 'bold',
-                background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-                color: 'white',
-                border: '3px solid rgba(255, 255, 255, 0.2)',
+                position: "absolute",
+                top: "-50%",
+                right: "-50%",
+                width: "200%",
+                height: "200%",
+                background:
+                  "radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%)",
+                pointerEvents: "none",
               }}
-            >
-              EA
-            </div>
-          </div>
+            />
 
-          {/* Company Name */}
-          <h2
-            style={{
-              fontSize: '28px',
-              fontWeight: 'bold',
-              background: 'linear-gradient(90deg, #ffd700, #ffed4e, #ffd700)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              textAlign: 'center',
-              marginBottom: '20px',
-              letterSpacing: '1px',
-            }}
-          >
-            Equilibrate.AI
-          </h2>
-
-          {/* Invitation Section */}
-          <div
-            style={{
-              background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(240, 147, 251, 0.15) 100%)',
-              borderRadius: '12px',
-              padding: '20px',
-              marginBottom: '20px',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-            }}
-          >
-            <div
-              style={{
-                fontSize: '20px',
-                fontWeight: '700',
-                color: '#ffd700',
-                textAlign: 'center',
-                marginBottom: '12px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-              }}
-            >
-              🎉 Join Us at BTS 2025!
-            </div>
-            <p
-              style={{
-                fontSize: '14px',
-                color: 'rgba(255, 255, 255, 0.85)',
-                textAlign: 'center',
-                lineHeight: '1.5',
-              }}
-            >
-              Visit our booth at Bangalore Tech Summit and explore cutting-edge innovations!
-            </p>
-          </div>
-
-          {/* Event Details - Compact */}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '12px',
-              marginBottom: '20px',
-            }}
-          >
-            {/* Location */}
-            <div
-              style={{
-                background: 'rgba(255, 255, 255, 0.05)',
-                borderRadius: '10px',
-                padding: '12px',
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: '10px',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-              }}
-            >
-              <MapPin size={18} style={{ color: '#10b981', marginTop: '2px', flexShrink: 0 }} />
-              <div style={{ flex: 1 }}>
-                <p style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '4px' }}>
-                  Location
-                </p>
-                <p style={{ fontSize: '13px', color: 'white', fontWeight: '500', lineHeight: '1.4' }}>
-                  BIEC, Tumkur Road, Bengaluru
-                </p>
-              </div>
-            </div>
-
-            {/* Dates */}
-            <div
-              style={{
-                background: 'rgba(255, 255, 255, 0.05)',
-                borderRadius: '10px',
-                padding: '12px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-              }}
-            >
-              <Calendar size={18} style={{ color: '#3b82f6', flexShrink: 0 }} />
-              <div style={{ flex: 1 }}>
-                <p style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '4px' }}>
-                  Event Dates
-                </p>
-                <p style={{ fontSize: '13px', color: 'white', fontWeight: '500' }}>
-                  November 19-21, 2025
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Action Buttons - Compact */}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '10px',
-            }}
-          >
-            <a
-              href="https://bengalurutechsummit.karnataka.gov.in/"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                background: 'linear-gradient(135deg, #ffd700 0%, #ffed4e 100%)',
-                color: '#1a1a1a',
-                padding: '14px 20px',
-                borderRadius: '10px',
-                fontSize: '15px',
-                fontWeight: 'bold',
-                textAlign: 'center',
-                textDecoration: 'none',
-                boxShadow: '0 4px 15px rgba(255, 215, 0, 0.3)',
-                transition: 'all 0.3s',
-                border: 'none',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 6px 20px rgba(255, 215, 0, 0.5)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 15px rgba(255, 215, 0, 0.3)';
-              }}
-            >
-              <ExternalLink size={16} />
-              Visit Summit Website
-            </a>
-
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                console.log('🏠 Navigating to home page');
-                onNavigate();
-              }}
-              style={{
-                background: 'rgba(255, 255, 255, 0.1)',
-                color: 'white',
-                padding: '12px 20px',
-                borderRadius: '10px',
-                fontSize: '14px',
-                fontWeight: '600',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                cursor: 'pointer',
-                transition: 'all 0.3s',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
-                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
-                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-              }}
-            >
-              Continue to Home ({countdown}s) →
+            <button className="tech-summit-close-btn" onClick={onClose}>
+              <X size={20} />
             </button>
+
+            <div className="tech-summit-logo">
+              <Image
+                className="tech-summit-logo-box"
+                src={"/logo.jpg"}
+                alt="company logo"
+                width={100}
+                height={100}
+              />
+            </div>
+
+            <h2 className="tech-summit-title">Equilibrate.AI</h2>
+
+            <div className="tech-summit-invitation">
+              <div className="tech-summit-invitation-title">
+                Join Us at BTS 2025!
+              </div>
+              <p className="tech-summit-invitation-text">
+                Visit our booth at Bangalore Tech Summit and explore
+                cutting-edge innovations!
+              </p>
+            </div>
+
+            <div className="tech-summit-details">
+              <div className="tech-summit-detail-item">
+                <MapPin size={18} className="tech-summit-detail-icon" />
+                <div style={{ flex: 1 }}>
+                  <p className="tech-summit-detail-label">Location</p>
+                  <p className="tech-summit-detail-value">
+                    MM Activ Sci-Tech Communications No.11/6, NITON, Block
+                    &quot;C Second Floor, Palace Road Bengaluru - 560001,
+                    Karnataka, India
+                  </p>
+                </div>
+              </div>
+
+              <div className="tech-summit-detail-item dates">
+                <Calendar size={18} className="tech-summit-detail-icon" />
+                <div style={{ flex: 1 }}>
+                  <p className="tech-summit-detail-label">Event Dates</p>
+                  <p className="tech-summit-detail-value">
+                    November 18-20, 2025
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="tech-summit-buttons">
+              <a
+                href="https://www.bengalurutechsummit.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="tech-summit-btn"
+              >
+                <ExternalLink size={16} />
+                Visit Summit Website
+              </a>
+
+              <button
+                onClick={handleNavigate}
+                disabled={isNavigating}
+                className="tech-summit-btn tech-summit-btn-secondary"
+                style={{ opacity: isNavigating ? 0.6 : 1 }}
+              >
+                {isNavigating ? "Navigating..." : "Continue to Home →"}
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

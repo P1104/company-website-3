@@ -8,35 +8,7 @@ import {
   Variants,
   AnimatePresence,
 } from "framer-motion";
-import { Target, Users, Cog } from "lucide-react";
-
-type FeatureType = {
-  title: string;
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-  description: string;
-};
-
-const FloatingLogo: React.FC<{ className?: string }> = ({ className = "" }) => (
-  <motion.div
-    className={`relative ${className}`}
-    animate={{
-      y: [0, -15, 0],
-      rotateY: [0, 360],
-      scale: [1, 1.1, 1],
-    }}
-    transition={{
-      y: { duration: 4, repeat: Infinity, ease: "easeInOut" },
-      rotateY: { duration: 10, repeat: Infinity, ease: "linear" },
-      scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-    }}
-    whileHover={{
-      scale: 1.2,
-      rotateZ: 10,
-      transition: { duration: 0.3 }
-    }}
-  >
-  </motion.div>
-);
+import {  Target, Users, Cog, ChevronDown } from "lucide-react";
 
 const RobotImage: React.FC = () => {
   return (
@@ -230,21 +202,15 @@ const itemVariants: Variants = {
   }
 };
 
-const wordVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay: i * 0.1 + 0.3,
-      duration: 0.5,
-    },
-  }),
+type FeatureType = {
+  title: string;
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
+  description: string;
 };
 
 const FeatureCard = ({
   feature,
-  index,
+  
   isExpanded,
   onClick,
 }: {
@@ -253,231 +219,104 @@ const FeatureCard = ({
   isExpanded: boolean;
   onClick: () => void;
 }) => {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const cardVariants: Variants = {
-    collapsed: {
-      height: isMobile ? 80 : 155,
-      transition: {
-        type: "spring",
-        stiffness: 120,
-        damping: 25,
-      }
-    },
-    expanded: {
-      height: isMobile ? 280 : 570,
-      transition: {
-        type: "spring",
-        stiffness: 120,
-        damping: 25,
-      }
-    }
-  };
-
-  const titleVariants: Variants = {
-    collapsed: { 
-      y: 0,
-      transition: { duration: 0.4 }
-    },
-    expanded: { 
-      y: isMobile ? 0 : -10,
-      transition: { duration: 0.4 }
-    }
-  };
-
-  const iconVariants: Variants = {
-    collapsed: {
-      scale: 1,
-      rotate: 0,
-      transition: { duration: 0.4 }
-    },
-    expanded: {
-      scale: isMobile ? 1.1 : 1.3,
-      rotate: isMobile ? 8 : 12,
-      transition: { duration: 0.4 }
-    }
+  const arrowVariants: Variants = {
+    collapsed: { rotate: 0 },
+    expanded: { rotate: 180 }
   };
 
   return (
     <motion.div
-      className="relative overflow-hidden rounded-3xl bg-white/96 backdrop-blur-lg border border-gray-200/60 shadow-2xl cursor-pointer group"
-      variants={cardVariants}
-      initial="collapsed"
-      animate={isExpanded ? "expanded" : "collapsed"}
+      className="relative rounded-2xl bg-white/95 backdrop-blur-lg border border-gray-200/80 shadow-lg hover:shadow-xl cursor-pointer group transition-all duration-300"
       onClick={onClick}
-      whileHover={{ 
-        boxShadow: "0 30px 60px -12px rgba(59, 130, 246, 0.2), 0 0 0 1px rgba(59, 130, 246, 0.15)",
-        scale: isExpanded ? 1.01 : 1.03,
-        transition: { duration: 0.4 }
-      }}
-      style={{
-        perspective: "1000px",
-        transformStyle: "preserve-3d"
+      whileHover={{
+        y: -2,
+        boxShadow: "0 20px 40px -12px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(59, 130, 246, 0.1)",
+        transition: { duration: 0.2 }
       }}
     >
-      <motion.div 
-        className="absolute inset-0 rounded-3xl"
+      <motion.div
+        className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 pointer-events-none"
         style={{
-          background: isExpanded 
-            ? "linear-gradient(135deg, #3b82f6 0%, #8b5cf6 25%, #06b6d4 50%, #10b981 75%, #f59e0b 100%)" 
-            : "linear-gradient(45deg, #3b82f6 0%, #8b5cf6 50%, #06b6d4 100%)",
-          backgroundSize: "300% 300%",
-          opacity: isExpanded ? 0.12 : 0.04
+          background: "linear-gradient(135deg, rgba(59, 130, 246, 0.02) 0%, rgba(139, 92, 246, 0.02) 50%, rgba(6, 182, 212, 0.02) 100%)"
         }}
-        animate={{
-          backgroundPosition: isExpanded ? ["0% 50%", "100% 50%", "0% 50%"] : ["0% 0%", "100% 100%", "0% 0%"],
-        }}
-        transition={{
-          duration: isExpanded ? 8 : 12,
-          repeat: Infinity,
-          ease: "linear",
-        }}
-      />
-      
-      <motion.div 
-        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent rounded-3xl"
-        animate={{
-          x: ["-120%", "120%"],
-          opacity: isExpanded ? [0, 0.6, 0] : [0, 0.3, 0]
-        }}
-        transition={{
-          duration: isExpanded ? 2 : 4,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: index * 0.3
-        }}
+        transition={{ duration: 0.3 }}
       />
 
       <motion.div
-        className="absolute inset-0 rounded-3xl border-2 border-transparent"
+        className="absolute inset-0 rounded-2xl border border-transparent pointer-events-none"
         style={{
-          background: `linear-gradient(45deg, transparent, ${isExpanded ? 'rgba(59, 130, 246, 0.3)' : 'rgba(59, 130, 246, 0.1)'}, transparent)`,
-          mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-          maskComposite: 'subtract'
+          background: `linear-gradient(135deg, transparent, ${isExpanded ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.05)'}, transparent)`,
         }}
         animate={{
-          rotate: [0, 360]
+          opacity: [0.5, 1, 0.5]
         }}
         transition={{
-          duration: 20,
+          duration: 3,
           repeat: Infinity,
-          ease: "linear"
+          ease: "easeInOut"
         }}
       />
 
-      <div className="relative z-10 h-full p-4 sm:p-6 md:p-8 lg:p-10 flex flex-col">
-        <motion.div 
-          className="flex items-center gap-3 sm:gap-4 md:gap-6 mb-2 sm:mb-3 md:mb-4"
-          variants={titleVariants}
-        >
-          <motion.div
-            className="flex-shrink-0 inline-flex h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 lg:h-16 lg:w-16 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br from-blue-100 to-blue-50 text-blue-600 relative overflow-hidden shadow-lg"
-            variants={iconVariants}
-          >
+      <div className="relative z-10 p-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4 flex-1 min-w-0">
             <motion.div
-              className="absolute inset-0 rounded-xl sm:rounded-2xl bg-blue-200"
-              animate={{
-                scale: [1, 1.4, 1],
-                opacity: [0, 0.4, 0],
+              className="flex-shrink-0 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 text-blue-600 border border-blue-200/50 shadow-sm"
+              whileHover={{
+                scale: 1.05,
+                rotate: 5,
+                transition: { duration: 0.2 }
               }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                delay: index * 0.5,
+            >
+              <feature.icon className="h-6 w-6" strokeWidth={1.5} />
+            </motion.div>
+
+            <motion.h3
+              className="text-lg sm:text-xl font-semibold text-gray-900 leading-tight"
+              whileHover={{
+                color: "#3b82f6",
+                transition: { duration: 0.2 }
               }}
-            />
-            <feature.icon className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7 lg:h-8 lg:w-8 relative z-10" strokeWidth={1.5} />
-          </motion.div>
-          
-          <motion.h3
-            className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-900 leading-tight"
-            whileHover={{
-              color: "#3b82f6",
-              transition: { duration: 0.2 }
-            }}
+            >
+              {feature.title}
+            </motion.h3>
+          </div>
+
+          <motion.button
+            className="flex-shrink-0 ml-4 flex items-center justify-center w-8 h-8 rounded-full bg-gray-50 border border-gray-200 group-hover:bg-blue-50 group-hover:border-blue-200 transition-all duration-300"
+            variants={arrowVariants}
+            animate={isExpanded ? "expanded" : "collapsed"}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
           >
-            {feature.title}
-          </motion.h3>
-        </motion.div>
+            <ChevronDown className="w-4 h-4 text-gray-500 group-hover:text-blue-600 transition-colors duration-300" />
+          </motion.button>
+        </div>
 
         <AnimatePresence>
           {isExpanded && (
             <motion.div
-              className="flex-1 flex flex-col justify-center py-2 sm:py-3 md:py-4 lg:py-6"
-              initial={{ opacity: 0, y: 30, scale: 0.95 }}
-              animate={{ 
-                opacity: 1, 
-                y: 0,
-                scale: 1,
-                transition: { 
-                  delay: 0.15,
-                  duration: 0.6,
-                  ease: "easeOut"
-                }
-              }}
-              exit={{ 
-                opacity: 0, 
-                y: 20,
-                scale: 0.95,
-                transition: { 
-                  duration: 0.3 
-                }
-              }}
+              className="mt-4 space-y-4 overflow-hidden"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
             >
-              <div className="">
-                <motion.p
-                  className="text-gray-700 leading-relaxed text-sm sm:text-base md:text-lg lg:text-xl font-light"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.3, duration: 0.5 }}
-                >
-                  {feature.description}
-                </motion.p>
-                
-                  {/* <motion.div
-                    className="mt-4 sm:mt-6"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5, duration: 0.4 }}
-                  >
-                    <motion.button
-                      className="group px-6 py-2 sm:px-8 sm:py-3 md:px-10 md:py-4 bg-gradient-to-r from-blue-600 via-blue-700 to-purple-700 text-white rounded-xl sm:rounded-2xl text-sm sm:text-base md:text-lg font-semibold inline-flex items-center gap-2 sm:gap-3 shadow-xl relative overflow-hidden"
-                      whileHover={{ 
-                        scale: 1.05,
-                        boxShadow: "0 15px 35px -5px rgba(59, 130, 246, 0.5)",
-                        transition: { duration: 0.2 }
-                      }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      <motion.div
-                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                        animate={{ x: ["-100%", "100%"] }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          repeatDelay: 3
-                        }}
-                      />
-                      <span className="relative z-10">Learn more</span>
-                      <motion.div
-                        animate={{ x: [0, 4, 0] }}
-                        transition={{ duration: 1.5, repeat: Infinity }}
-                      >
-                        <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 relative z-10" />
-                      </motion.div>
-                    </motion.button>
-                  </motion.div> */}
-              </div>
+              <motion.div
+                className="w-full h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent"
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 0.3, delay: 0.1 }}
+              />
+
+              <motion.p
+                className="text-gray-700 leading-relaxed text-sm"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.3 }}
+              >
+                {feature.description}
+              </motion.p>
             </motion.div>
           )}
         </AnimatePresence>
@@ -485,6 +324,61 @@ const FeatureCard = ({
     </motion.div>
   );
 };
+
+function AnimatedTitle() {
+  const [shouldAnimate, setShouldAnimate] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShouldAnimate(true), 300);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const titleVariants:Variants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.8,
+        ease: [0.6, -0.05, 0.01, 0.99],
+      },
+    },
+  };
+
+  return shouldAnimate ? (
+    <motion.h1
+      className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-center"
+      variants={titleVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      {["What", "We", "Deliver"].map((word, index) => (
+        <motion.span
+          key={index}
+          className="inline-block mr-3 bg-gradient-to-r from-gray-900 via-slate-800 to-gray-900 bg-clip-text text-transparent transition-colors duration-200 ease-out hover:bg-gradient-to-r hover:from-violet-600 hover:via-blue-600 hover:to-cyan-500"
+          initial={{ opacity: 0, rotateY: 90 }}
+          whileInView={{ opacity: 1, rotateY: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: index * 0.08 }}
+          whileHover={{ y: -3, transition: { duration: 0.18 } }}
+        >
+          {word}
+        </motion.span>
+      ))}
+    </motion.h1>
+  ) : (
+    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-center">
+      {["What", "We", "Deliver"].map((word, index) => (
+        <span
+          key={index}
+          className="inline-block mr-3 bg-gradient-to-r from-gray-900 via-slate-800 to-gray-900 bg-clip-text text-transparent"
+        >
+          {word}
+        </span>
+      ))}
+    </h1>
+  );
+}
 
 export const HeroSectionFour: React.FC = () => {
   const containerRef = useRef(null);
@@ -501,7 +395,7 @@ export const HeroSectionFour: React.FC = () => {
       title: "AI Chatbot Development",
       icon: Users,
       description:
-        "We create intelligent chatbot systems that understand context, learn from interactions, and provide deeply personalized customer experiences. Our bots integrate seamlessly with your existing platforms and can handle complex conversations with advanced natural language processing.",
+        "We create intelligent chatbot systems that understand context, learn from interactions, and provide deeply personalized customer experiences. Our bots integrate seamlessly with your existing platforms and can handle complex conversations with advanced natural language processing capabilities.",
     },
     {
       title: "Data Analytics Solutions",
@@ -527,200 +421,101 @@ export const HeroSectionFour: React.FC = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.7 }}
-      className="relative overflow-hidden"
+      className="relative overflow-x-hidden"
       style={{ y }}
     >
       <motion.div
-        className="absolute inset-0 opacity-30"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.3 }}
-        transition={{ duration: 2 }}
-      >
-        {Array.from({ length: 20 }).map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-2 h-2 bg-blue-400 rounded-full"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              y: [0, -20, 0],
-              opacity: [0.3, 0.7, 0.3],
-            }}
-            transition={{
-              duration: 3 + Math.random() * 2,
-              repeat: Infinity,
-              delay: Math.random() * 2,
-            }}
-          />
-        ))}
-      </motion.div>
-
-      <div className="absolute inset-0 overflow-hidden">
-        {Array.from({ length: 30 }).map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-blue-400 rounded-full opacity-60"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              y: [0, -100, 0],
-              x: [0, Math.random() * 100 - 50, 0],
-              scale: [0, 1, 0],
-              opacity: [0, 0.8, 0],
-            }}
-            transition={{
-              duration: 8 + Math.random() * 4,
-              repeat: Infinity,
-              delay: Math.random() * 5,
-              ease: "easeInOut",
-            }}
-          />
-        ))}
-      </div>
-
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {Array.from({ length: 8 }).map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute"
-            style={{
-              left: `${20 + i * 15}%`,
-              top: `${20 + Math.random() * 60}%`,
-            }}
-            animate={{
-              rotate: [0, 360],
-              y: [0, -20, 0],
-              scale: [1, 1.1, 1],
-            }}
-            transition={{
-              duration: 10 + i,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-          >
-            <div
-              className={`w-4 h-4 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded ${
-                i % 2 === 0 ? "rotate-45" : ""
-              }`}
-            />
-          </motion.div>
-        ))}
-      </div>
-
-      <motion.div
-        className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16"
+        className="relative z-10 container mx-auto px-4 sm:px-6 pt-20 pb-10 overflow-x-hidden"
         initial="hidden"
         animate="visible"
         variants={containerVariants}
       >
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center mb-8 sm:mb-12 md:mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center mb-20">
           <motion.div
-            className="text-center lg:text-left order-2 lg:order-1"
+            className="text-left order-2 lg:order-1"
             variants={containerVariants}
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <motion.h1
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 mb-3 sm:mb-4 md:mb-6 leading-tight"
-              variants={itemVariants}
-            >
-              {["What", "Do", "We", "Do", "?"].map((word, index) => (
-                <motion.span
-                  key={index}
-                  custom={index}
-                  variants={wordVariants}
-                  className="inline-block mr-1 sm:mr-2"
-                  whileHover={{
-                    scale: 1.05,
-                    color: "#3b82f6",
-                    transition: { duration: 0.2 },
-                  }}
-                >
-                  {word}
-                </motion.span>
-              ))}
-            </motion.h1>
+            <AnimatedTitle />
 
             <motion.p
-              className="text-sm sm:text-base md:text-lg text-gray-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed mb-4 sm:mb-6 md:mb-8"
+              className="text-lg sm:text-xl text-gray-600 mb-8 leading-relaxed font-light max-w-2xl"
               variants={itemVariants}
-              whileHover={{
-                scale: 1.02,
-                transition: { duration: 0.2 },
-              }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
             >
-              Equilibrate.AI is here to transform old age tech across industries
-              with solutions in Development, Data Analytics and Customer
-              Service. We build intelligent chatbot systems tailored to modern
-              business needs. Our data-driven insights help companies make
-              smarter, faster decisions. From prototypes to scalable systems, we
-              empower businesses to grow with AI.
+              Equilibrate.AI transforms businesses with cutting-edge solutions in{" "}
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent font-medium">
+                AI Development, Data Analytics, and Customer Service Automation
+              </span>
+              . We build intelligent systems tailored to your business needs.
             </motion.p>
+
+            <motion.div
+              className="flex flex-wrap gap-3"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.8 }}
+            >
+              {["Enterprise Ready", "24/7 Support", "Scalable Solutions","User friendly"].map((tag, i) => (
+                <motion.span
+                  key={tag}
+                  className="px-4 py-2 bg-blue-50 text-blue-700 text-sm font-medium rounded-full border border-blue-200"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.9 + i * 0.1, duration: 0.3 }}
+                  whileHover={{ scale: 1.05 }}
+                >
+                  {tag}
+                </motion.span>
+              ))}
+            </motion.div>
           </motion.div>
 
           <motion.div
-            className="flex justify-center order-1 lg:order-2"
+            className="flex justify-center lg:justify-end order-1 lg:order-2 overflow-hidden"
             variants={itemVariants}
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
           >
-            <div className="relative w-full h-full sm:w-full sm:h-full mx-auto">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-100/20 via-white/10 to-purple-100/20 rounded-full blur-3xl scale-110" />
-              <div className="absolute inset-0 border-4 border-blue-200/30 rounded-full blur-sm" />
-
-              <motion.div 
-                className="absolute -top-6 -left-6 sm:-top-8 sm:-left-8 w-12 h-12 sm:w-16 sm:h-16 z-20"
-                initial={{ x: -50, y: -50, opacity: 0 }}
-                animate={{ x: 0, y: 0, opacity: 1 }}
-                transition={{ 
-                  duration: 0.6,
-                  delay: 0.6
-                }}
-              >
-                <FloatingLogo className="w-full h-full" />
-              </motion.div>
-
-              <RobotImage />
-              
-              <motion.div
-                className="absolute -bottom-4 -right-4 sm:-bottom-6 sm:-right-6 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-gradient-to-br from-purple-400/30 to-pink-500/30 rounded-full blur-2xl"
-                animate={{ 
-                  scale: [1, 1.3, 1],
-                  rotate: [0, 180, 360],
-                  opacity: [0.3, 0.6, 0.3]
-                }}
-                transition={{ 
-                  duration: 12, 
-                  repeat: Infinity, 
-                  ease: "easeInOut" 
-                }}
-              />
-            </div>
+            <RobotImage />
           </motion.div>
         </div>
 
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-none"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-10px" }}
           variants={{
             visible: {
               transition: {
-                staggerChildren: 0.08,
+                staggerChildren: 0.1,
                 delayChildren: 0.2,
               },
             },
           }}
         >
           {features.map((feature, index) => (
-            <FeatureCard
+            <motion.div
               key={feature.title}
-              feature={feature}
-              index={index}
-              isExpanded={expandedIndex === index}
-              onClick={() => handleCardClick(index)}
-            />
+              variants={itemVariants}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
+            >
+              <FeatureCard
+                feature={feature}
+                index={index}
+                isExpanded={expandedIndex === index}
+                onClick={() => handleCardClick(index)}
+              />
+            </motion.div>
           ))}
         </motion.div>
       </motion.div>

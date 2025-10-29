@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -13,15 +14,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+
+
 import { Badge } from "@/components/ui/badge";
 import {
-  CalendarIcon,
+
   Upload,
   User,
   Mail,
@@ -35,7 +32,7 @@ import {
   CheckCircle,
   ArrowRight,
 } from "lucide-react";
-import { format } from "date-fns";
+
 
 interface FormData {
   firstName: string;
@@ -43,6 +40,7 @@ interface FormData {
   email: string;
   phone: string;
   position: string;
+  customPosition?: string;
   resume: File | null;
   noticePeriod: Date | undefined;
   coverLetter: string;
@@ -71,21 +69,11 @@ export function CarrerSecTwo() {
   });
 
   const [currentSkill, setCurrentSkill] = useState("");
-  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const positions = [
-    "Frontend Developer",
-    "Backend Developer",
-    "Full Stack Developer",
-    "UI/UX Designer",
-    "Project Manager",
-    "DevOps Engineer",
-    "Data Scientist",
-    "Product Manager",
-    "Other",
-  ];
+  const positions = ["Technical", "Non-Technical", "Others"];
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -426,7 +414,14 @@ export function CarrerSecTwo() {
                         </h3>
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                      <div
+                        className={`grid gap-6 mb-8 ${
+                          formData.position === "Others"
+                            ? "md:grid-cols-2"
+                            : "grid-cols-1"
+                        }`}
+                      >
+                        {/* Position Dropdown */}
                         <motion.div
                           whileHover={{ scale: 1.02 }}
                           whileFocus={{ scale: 1.02 }}
@@ -464,50 +459,38 @@ export function CarrerSecTwo() {
                           </div>
                         </motion.div>
 
-                        <motion.div
-                          whileHover={{ scale: 1.02 }}
-                          whileFocus={{ scale: 1.02 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          <Label
-                            htmlFor="noticePeriod"
-                            className="text-gray-800 font-medium mb-3 block"
+                        {/* Conditionally show text box when "Others" is selected */}
+                        {formData.position === "Others" && (
+                          <motion.div
+                            whileHover={{ scale: 1.02 }}
+                            whileFocus={{ scale: 1.02 }}
+                            transition={{ duration: 0.2 }}
                           >
-                            Available From
-                          </Label>
-                          <div className="relative">
-                            <Popover
-                              open={isCalendarOpen}
-                              onOpenChange={setIsCalendarOpen}
+                            <Label
+                              htmlFor="customPosition"
+                              className="text-gray-800 font-medium mb-3 block"
                             >
-                              <PopoverTrigger asChild>
-                                <Button
-                                  variant="outline"
-                                  className="w-full pl-12 pr-4 py-4 bg-white border-2 border-gray-200 rounded-xl text-gray-900 hover:bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 justify-start font-normal"
-                                >
-                                  {formData.noticePeriod
-                                    ? format(formData.noticePeriod, "PPP")
-                                    : "Select availability date"}
-                                </Button>
-                              </PopoverTrigger>
-                              <PopoverContent className="w-auto p-0 bg-white border-2 border-gray-200 rounded-xl shadow-xl">
-                                <Calendar
-                                  mode="single"
-                                  selected={formData.noticePeriod}
-                                  onSelect={(date) => {
-                                    handleInputChange("noticePeriod", date);
-                                    setIsCalendarOpen(false);
-                                  }}
-                                  initialFocus
-                                  className="bg-white text-black rounded-xl [&_*]:text-black"
-                                />
-                              </PopoverContent>
-                            </Popover>
-                            <CalendarIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                          </div>
-                        </motion.div>
+                              Please specify your desired position
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="customPosition"
+                                value={formData.customPosition || ""}
+                                onChange={(e) =>
+                                  handleInputChange(
+                                    "customPosition",
+                                    e.target.value
+                                  )
+                                }
+                                placeholder="Enter your custom position"
+                                className="w-full pl-4 pr-4 py-4 bg-white border-2 border-gray-200 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+                              />
+                            </div>
+                          </motion.div>
+                        )}
                       </div>
 
+                      {/* Resume Upload */}
                       <motion.div
                         whileHover={{ scale: 1.01 }}
                         transition={{ duration: 0.2 }}
@@ -816,7 +799,7 @@ export function CarrerSecTwo() {
                     whileHover="visible"
                   >
                     <motion.div variants={floatingCard}>
-                      {/* <motion.div
+                      <motion.div
                         whileHover={{ scale: 1.01 }}
                         transition={{ duration: 0.2 }}
                         className="mb-8"
@@ -844,7 +827,7 @@ export function CarrerSecTwo() {
                             and contact me regarding potential opportunities.
                           </label>
                         </div>
-                      </motion.div> */}
+                      </motion.div>
 
                       <motion.button
                         type="submit"

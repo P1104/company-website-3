@@ -121,7 +121,7 @@ export async function POST(request: Request) {
           
           <p>To check the progress of your application, you can login to our <strong>HR Portal</strong> and check the status under the "My Applications" section.</p>
           
-          <p>For any help or queries, please contact our HR team at <a href="mailto:hr@company.com">hr@company.com</a>.</p>
+          <p>For any help or queries, please contact our HR team at <a href="mailto:support@equilibrateai.com">support@equilibrateai.com</a>.</p>
           
           <div style="margin-top: 30px; padding-top: 15px; border-top: 1px solid #eee;">
             <p style="margin-bottom: 5px;">Best regards,</p>

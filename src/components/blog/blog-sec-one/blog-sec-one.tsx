@@ -44,13 +44,13 @@ export const BlogSectionOne = ({
       opacity: 1,
       transition: {
         duration: 0.6,
-        ease: [0.25, 0.1, 0.25, 1], // easeOut as cubic bezier
+        ease: [0.25, 0.1, 0.25, 1],
       },
     },
   };
 
   return (
-    <div className="relative overflow-hidden pt-4 border-b">
+    <div className="relative overflow-hidden pt-6">
       <div className="absolute inset-0 w-full h-full">
         <Sparkles
           background="transparent"
@@ -62,7 +62,7 @@ export const BlogSectionOne = ({
         />
       </div>
 
-      <div className="relative z-10 pt-10">
+      <div className="relative z-15 pt-12">
         <section className="py-20 lg:py-16">
           <motion.div
             ref={containerRef}
@@ -76,35 +76,31 @@ export const BlogSectionOne = ({
               variants={itemVariants}
             >
               <motion.h1
-                className="mb-6 text-black text-4xl font-bold md:text-5xl lg:text-6xl"
+                className="mb-2 text-4xl font-bold md:text-5xl lg:text-6xl leading-relaxed"
                 variants={itemVariants}
                 whileHover={{ scale: 1.02 }}
               >
-                {heading}
+                {heading.split(" ").map((word, i) => (
+                  <motion.span
+                    key={i}
+                    className="inline-block mr-2 bg-gradient-to-r from-gray-900 via-slate-800 to-gray-900 bg-clip-text text-transparent transition-colors duration-200 ease-out hover:bg-gradient-to-r hover:from-violet-600 hover:via-blue-600 hover:to-cyan-500"
+                    initial={{ opacity: 0, rotateY: 90 }}
+                    whileInView={{ opacity: 1, rotateY: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: i * 0.1 }}
+                    whileHover={{ y: -3, transition: { duration: 0.18 } }}
+                  >
+                    {word}
+                  </motion.span>
+                ))}
               </motion.h1>
 
               <motion.p
-                className="mb-8 text-lg text-gray-600 md:text-xl lg:max-w-3xl"
+                className="pt-4 text-lg text-gray-600 md:text-xl lg:max-w-3xl mx-auto"
                 variants={itemVariants}
               >
                 {description}
               </motion.p>
-{/* 
-              <motion.div
-                variants={itemVariants}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Button
-                  size="lg"
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
-                >
-                  <span className="flex items-center">
-                    {buttonText}
-                    <ArrowRight className="ml-2 size-4" />
-                  </span>
-                </Button>
-              </motion.div> */}
             </motion.div>
           </motion.div>
         </section>

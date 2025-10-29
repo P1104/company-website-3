@@ -10,20 +10,32 @@ export function AboutSectionFour() {
       <div className="max-w-7xl mx-auto px-6">
         {/* Section Header */}
         <motion.div
-          className="text-center mb-16"
+          className="text-center mb-4"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
           <motion.h2
-            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6"
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 overflow-visible"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            Our Impact Story
+            {["Our", "Impact", "Story"].map((word, i) => (
+              <motion.span
+                key={i}
+                className="inline-block mr-2 bg-gradient-to-r from-gray-900 via-slate-800 to-gray-900 bg-clip-text text-transparent transition-colors duration-200 ease-out hover:bg-gradient-to-r hover:from-violet-600 hover:via-blue-600 hover:to-cyan-500"
+                initial={{ opacity: 0, rotateY: 90 }}
+                whileInView={{ opacity: 1, rotateY: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: i * 0.1 }}
+                whileHover={{ y: -3, transition: { duration: 0.18 } }}
+              >
+                {word}
+              </motion.span>
+            ))}
           </motion.h2>
           <motion.p
             className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed"
@@ -125,19 +137,31 @@ export function AboutSectionFour() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: 0.6 }}
                 >
-                  <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-                    Socio-Economic Survey 2025
+                  <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 overflow-visible">
+                    {["Socio-Economic", "Survey", "2025"].map((word, i) => (
+                      <motion.span
+                        key={i}
+                        className="inline-block mr-2 bg-gradient-to-r from-gray-900 via-slate-800 to-gray-900 bg-clip-text text-transparent transition-colors duration-200 ease-out hover:bg-gradient-to-r hover:from-violet-600 hover:via-blue-600 hover:to-cyan-500"
+                        initial={{ opacity: 0, rotateY: 90 }}
+                        whileInView={{ opacity: 1, rotateY: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6, delay: i * 0.1 }}
+                        whileHover={{ y: -3, transition: { duration: 0.18 } }}
+                      >
+                        {word}
+                      </motion.span>
+                    ))}
                   </h3>
                   <p className="text-lg text-gray-600 mb-6 leading-relaxed">
                     We developed a comprehensive web application for
-                    Karnataka`&apos;`s state-wide socio-economic survey,
+                    Karnataka&apos;s state-wide socio-economic survey,
                     creating an integrated ecosystem of digital tools that
                     revolutionized data collection and enumerator training
                     processes.
                   </p>
 
                   {/* Partnership details */}
-                  <div className="flex flex-wrap gap-3 mb-6">
+                  {/* <div className="flex flex-wrap gap-3 mb-6">
                     {[
                       "Web Application",
                       "AI Training Bot",
@@ -156,7 +180,7 @@ export function AboutSectionFour() {
                         {service}
                       </motion.span>
                     ))}
-                  </div>
+                  </div> */}
                 </motion.div>
               </motion.div>
 
@@ -179,7 +203,7 @@ export function AboutSectionFour() {
                     height={100}
                     src="/anish_explain.jpg"
                     alt="Project presentation and team collaboration"
-                    className="w-full h-64 sm:h-72 object-cover"
+                    className="w-full h-116 sm:h-116 object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
                   <motion.div
@@ -204,9 +228,9 @@ export function AboutSectionFour() {
                 <div className="grid grid-cols-2 gap-4">
                   {[
                     {
-                      number: "1.5+",
-                      unit: "Lakh",
-                      label: "Users Served",
+                      number: "150K+",
+                      unit: "Citizens",
+                      label: "Served",
                       color: "from-blue-600 to-blue-700",
                     },
                     {
@@ -263,6 +287,27 @@ export function AboutSectionFour() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 1.0 }}
             >
+              <motion.h3
+                className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-8 text-center overflow-visible"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 1.1 }}
+              >
+                {["Solutions", "Delivered"].map((word, i) => (
+                  <motion.span
+                    key={i}
+                    className="inline-block mr-2 bg-gradient-to-r from-gray-900 via-slate-800 to-gray-900 bg-clip-text text-transparent transition-colors duration-200 ease-out hover:bg-gradient-to-r hover:from-violet-600 hover:via-blue-600 hover:to-cyan-500"
+                    initial={{ opacity: 0, rotateY: 90 }}
+                    whileInView={{ opacity: 1, rotateY: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 1.2 + i * 0.1 }}
+                    whileHover={{ y: -3, transition: { duration: 0.18 } }}
+                  >
+                    {word}
+                  </motion.span>
+                ))}
+              </motion.h3>
               <div className="grid md:grid-cols-3 gap-6">
                 {[
                   {

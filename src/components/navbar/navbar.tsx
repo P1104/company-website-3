@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Home, Zap, CreditCard, Package, Mail, X, Menu } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -16,24 +17,22 @@ interface NavItem {
 export const Navbar = () => {
   const [mounted, setMounted] = useState(false);
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<string>("Home");
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [expandedSubMenu, setExpandedSubMenu] = useState<string | null>(null);
 
+  const pathname = usePathname();
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const navItems: NavItem[] = [
-    {
-      name: "Home",
-      url: "/home",
-      icon: Home,
-    },
+    { name: "Home", url: "/home", icon: Home },
     {
       name: "Company",
       url: "#",
       icon: Zap,
       subItems: [
         { name: "About Us", url: "/about-us" },
-        { name: "Careers", url: "/carrers" },
+        { name: "Carrers", url: "/carrers" },
       ],
     },
     {
@@ -45,54 +44,42 @@ export const Navbar = () => {
         { name: "Use Cases", url: "/use-cases" },
       ],
     },
-    {
-      name: "Products",
-      url: "/product",
-      icon: Package,
-    },
-    {
-      name: "Contact Us",
-      url: "/contact-us",
-      icon: Mail,
-    },
+    { name: "Products", url: "/product", icon: Package },
+    { name: "Contact Us", url: "/contact-us", icon: Mail },
   ];
+
+  // Find which tab should be active based on current route
+  const [activeTab, setActiveTab] = useState<string>("Home");
+
+  useEffect(() => {
+    const matchedItem =
+      navItems.find(
+        (item) =>
+          pathname === item.url ||
+          item.subItems?.some((sub) => pathname.startsWith(sub.url))
+      ) || navItems[0];
+    setActiveTab(matchedItem.name);
+  }, [navItems,pathname]);
 
   useEffect(() => {
     setMounted(true);
 
     const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      setIsScrolled(window.scrollY > 10);
     };
 
     window.addEventListener("scroll", handleScroll);
     handleScroll();
 
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-
+    document.body.style.overflow = isMobileMenuOpen ? "hidden" : "unset";
     return () => {
       document.body.style.overflow = "unset";
     };
   }, [isMobileMenuOpen]);
-
-  const handleMobileItemClick = (itemName: string) => {
-    setActiveTab(itemName);
-    setIsMobileMenuOpen(false);
-    setExpandedSubMenu(null);
-  };
 
   const toggleSubMenu = (itemName: string) => {
     setExpandedSubMenu(expandedSubMenu === itemName ? null : itemName);
@@ -139,7 +126,6 @@ export const Navbar = () => {
               >
                 <Link
                   href={item.url}
-                  onClick={() => setActiveTab(item.name)}
                   className={cn(
                     "relative cursor-pointer text-sm font-medium px-4 py-2 rounded-full transition-all duration-300",
                     "text-white/80 hover:text-white",
@@ -168,6 +154,26 @@ export const Navbar = () => {
                   )}
                 </Link>
 
+                {/* Tube-Light Feature */}
+                {isActive && (
+                  <motion.div
+                    layoutId="lamp"
+                    className="absolute inset-0 w-full bg-white/5 rounded-full -z-10 pointer-events-none"
+                    initial={false}
+                    transition={{
+                      type: "spring",
+                      stiffness: 300,
+                      damping: 30,
+                    }}
+                  >
+                    <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-8 h-1 bg-white rounded-t-full">
+                      <div className="absolute w-12 h-6 bg-white/20 rounded-full blur-md -top-2 -left-2" />
+                      <div className="absolute w-8 h-6 bg-white/20 rounded-full blur-md -top-1" />
+                      <div className="absolute w-4 h-4 bg-white/20 rounded-full blur-sm top-0 left-2" />
+                    </div>
+                  </motion.div>
+                )}
+
                 {hasDropdown && (
                   <AnimatePresence>
                     {hoveredTab === item.name && (
@@ -187,7 +193,6 @@ export const Navbar = () => {
                             key={subItem.name}
                             href={subItem.url}
                             className="block px-4 py-2 text-sm text-white/80 hover:text-white transition duration-150"
-                            onClick={() => setActiveTab(item.name)}
                           >
                             {subItem.name}
                           </Link>
@@ -202,10 +207,10 @@ export const Navbar = () => {
         </motion.div>
       </motion.nav>
 
-      {/* Mobile Hamburger Button - Always visible on mobile */}
+      {/* Mobile Hamburger Button */}
       <motion.button
         onClick={() => setIsMobileMenuOpen(true)}
-        className="fixed top-4 right-4 z-50 md:hidden p-3 bg-black  backdrop-blur-md rounded-full border border-white/10 shadow-lg text-white hover:bg-white/5 transition-colors"
+        className="fixed top-4 right-4 z-50 md:hidden p-3 bg-black backdrop-blur-md rounded-full border border-white/10 shadow-lg text-white hover:bg-white/5 transition-colors"
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3 }}
@@ -224,13 +229,11 @@ export const Navbar = () => {
             transition={{ duration: 0.5 }}
             className="fixed inset-0 z-40 md:hidden"
           >
-            {/* Backdrop */}
             <motion.div
               className="absolute inset-0 backdrop-blur-sm"
               onClick={() => setIsMobileMenuOpen(false)}
             />
 
-            {/* Menu Content */}
             <motion.div
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
@@ -295,7 +298,7 @@ export const Navbar = () => {
                         ) : (
                           <Link
                             href={item.url}
-                            onClick={() => handleMobileItemClick(item.name)}
+                            onClick={() => setIsMobileMenuOpen(false)}
                             className={cn(
                               "flex items-center gap-3 px-6 py-3 transition-colors",
                               "text-white/80 hover:text-white hover:bg-white/5",
@@ -321,9 +324,7 @@ export const Navbar = () => {
                                 <Link
                                   key={subItem.name}
                                   href={subItem.url}
-                                  onClick={() =>
-                                    handleMobileItemClick(item.name)
-                                  }
+                                  onClick={() => setIsMobileMenuOpen(false)}
                                   className="block px-12 py-3 text-white/70 hover:text-white hover:bg-white/5 transition-colors"
                                 >
                                   {subItem.name}

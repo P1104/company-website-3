@@ -9,11 +9,10 @@ import { Marketing } from "../marketing";
 export function HomePage() {
   return (
     <HeroSectionThemeWrapper>
-      <div className="relative z-10">
+      <div>
         <HeroSectionOne />
         <HeroSectionTwo />
         <HeroSectionFour />
-        <br />
         <Marketing />
         <HeroSectionThree />
       </div>

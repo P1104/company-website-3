@@ -1,18 +1,15 @@
 "use client";
-import React, { useId, useEffect, useState, useRef } from "react";
-import Particles, { initParticlesEngine } from "@tsparticles/react";
-import type { Container } from "@tsparticles/engine";
-import { loadSlim } from "@tsparticles/slim";
+
+import React, { useState, useRef } from "react";
 import {
   motion,
-  useAnimation,
   useInView,
   AnimatePresence,
   Variants,
 } from "framer-motion";
 import { Card, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { CheckCircle, Zap, Globe, ArrowRight, HousePlug, File } from "lucide-react";
+
+import { CheckCircle, Zap, Globe, ArrowRight, Wifi, File } from "lucide-react";
 import { Bot, BarChart3, Headphones } from "lucide-react";
 import {
   Carousel,
@@ -27,161 +24,7 @@ function cn(...classes: (string | undefined | null | false)[]): string {
   return classes.filter(Boolean).join(" ");
 }
 
-type ParticlesProps = {
-  id?: string;
-  className?: string;
-  background?: string;
-  particleSize?: number;
-  minSize?: number;
-  maxSize?: number;
-  speed?: number;
-  particleColor?: string;
-  particleDensity?: number;
-};
-
-// Memoized Sparkles component
-const Sparkles = React.memo((props: ParticlesProps) => {
-  const {
-    id,
-    className,
-    background,
-    minSize,
-    maxSize,
-    speed,
-    particleColor,
-    particleDensity,
-  } = props;
-  const [init, setInit] = useState(false);
-  const [isInitializing, setIsInitializing] = useState(false);
-
-  useEffect(() => {
-    if (isInitializing) return;
-
-    setIsInitializing(true);
-    initParticlesEngine(async (engine) => {
-      await loadSlim(engine);
-    }).then(() => {
-      setInit(true);
-      setIsInitializing(false);
-    });
-  }, [isInitializing]);
-
-  const controls = useAnimation();
-
-  const particlesLoaded = async (container?: Container) => {
-    if (container) {
-      controls.start({
-        opacity: 1,
-        transition: {
-          duration: 0.5,
-        },
-      });
-    }
-  };
-
-  const generatedId = useId();
-
-  const particleOptions = {
-    background: {
-      color: {
-        value: background || "transparent",
-      },
-    },
-    fullScreen: {
-      enable: false,
-      zIndex: 1,
-    },
-    fpsLimit: 60,
-    interactivity: {
-      events: {
-        onClick: {
-          enable: true,
-          mode: "push",
-        },
-        onHover: {
-          enable: false,
-          mode: "repulse",
-        },
-        resize: {
-          enable: true,
-        },
-      },
-      modes: {
-        push: {
-          quantity: 4,
-        },
-        repulse: {
-          distance: 200,
-          duration: 0.4,
-        },
-      },
-    },
-    particles: {
-      color: {
-        value: particleColor || "#6366f1",
-      },
-      move: {
-        direction: "none" as const,
-        enable: true,
-        outModes: {
-          default: "out" as const,
-        },
-        random: false,
-        speed: {
-          min: 0.1,
-          max: speed || 1,
-        },
-        straight: false,
-      },
-      number: {
-        density: {
-          enable: true,
-          width: 400,
-          height: 400,
-        },
-        value: particleDensity || 80,
-      },
-      opacity: {
-        value: {
-          min: 0.1,
-          max: 0.5,
-        },
-        animation: {
-          enable: true,
-          speed: speed || 4,
-          sync: false,
-        },
-      },
-      shape: {
-        type: "circle",
-      },
-      size: {
-        value: {
-          min: minSize || 1,
-          max: maxSize || 3,
-        },
-      },
-    },
-    detectRetina: true,
-  };
-
-  return (
-    <motion.div animate={controls} className={cn("opacity-0", className)}>
-      {init && (
-        <Particles
-          id={id || generatedId}
-          className={cn("h-full w-full")}
-          particlesLoaded={particlesLoaded}
-          options={particleOptions}
-        />
-      )}
-    </motion.div>
-  );
-});
-
-Sparkles.displayName = "Sparkles";
-
-// Floating elements animation from product-sec-one
+// Floating elements animation
 const FloatingElements = () => {
   const floatingVariants: Variants = {
     animate: {
@@ -214,7 +57,7 @@ const FloatingElements = () => {
   );
 };
 
-// Magnetic effect component from product-sec-one
+// Magnetic effect component
 const MagneticZap = () => {
   return (
     <motion.div
@@ -373,7 +216,7 @@ const ProductCard = React.memo(
     onClick: () => void;
   }) => {
     const cardRef = useRef(null);
-    const isInView = useInView(cardRef, { once: true, amount: 0.2 });
+    const isInView = useInView(cardRef, { once: false, amount: 0.2 });
 
     return (
       <motion.div
@@ -414,7 +257,15 @@ const ProductCard = React.memo(
             </motion.div>
 
             <h3 className="text-lg sm:text-xl font-semibold mb-2">{suite.title}</h3>
-            <p className="text-sm sm:text-base text-gray-600">{suite.description}</p>
+            <p className="text-sm sm:text-base text-gray-600 mb-4">{suite.description}</p>
+
+            <motion.div
+              className="inline-flex items-center gap-2 text-indigo-600 font-semibold text-sm hover:text-indigo-700 transition-colors"
+              whileHover={{ x: 5 }}
+            >
+              <span>Explore More</span>
+              <ArrowRight className="w-4 h-4" />
+            </motion.div>
 
             <AnimatePresence>
               {isSelected && (
@@ -466,15 +317,13 @@ const FeatureList = React.memo(({ features }: { features: string[] }) => {
 FeatureList.displayName = "FeatureList";
 
 export function ProductSecTwo() {
-  const [selectedSuite, setSelectedSuite] = useState<ProductSuite>(
-    productSuites[0]
-  );
-  const detailRef = useRef(null);
-  const heroRef = useRef(null);
-  const isDetailInView = useInView(detailRef, { once: true, amount: 0.2 });
-  const isHeroInView = useInView(heroRef, { once: true, amount: 0.3 });
+  const [selectedSuite, setSelectedSuite] = useState<ProductSuite | null>(null);
+const detailRef = useRef<HTMLDivElement | null>(null);
+const heroRef = useRef<HTMLDivElement | null>(null);
 
-  // Subtitle animation with magnetic effect from product-sec-one
+  const isDetailInView = useInView(detailRef, { once: false, amount: 0.2 });
+  const isHeroInView = useInView(heroRef, { once: false, amount: 0.3 });
+
   const subtitleVariants: Variants = {
     hidden: {
       opacity: 0,
@@ -497,23 +346,22 @@ export function ProductSecTwo() {
     }
   };
 
+  const handleCardClick = (suite: ProductSuite) => {
+  setSelectedSuite(suite);
+  setTimeout(() => {
+    detailRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, 50);
+};
+
+
+  const handleOutsideClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      setSelectedSuite(null);
+    }
+  };
+
   return (
-    <div className="text-gray-900 relative overflow-hidden pt-20 sm:pt-24 md:pt-34">
-      {/* Enhanced Sparkles Background */}
-      <div className="absolute inset-0 w-full h-full">
-        <Sparkles
-          background="transparent"
-          minSize={0.3}
-          maxSize={1.5}
-          particleDensity={80}
-          particleColor="#6366f1"
-          speed={0.8}
-        />
-      </div>
-
-      {/* Floating Elements */}
-      <FloatingElements />
-
+    <div className="text-gray-900 relative overflow-hidden pt-20 sm:pt-24 md:pt-34" onClick={handleOutsideClick}>
       {/* Animated Background Shapes */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
@@ -541,6 +389,9 @@ export function ProductSecTwo() {
           }}
         />
       </div>
+
+      {/* Floating Elements */}
+      <FloatingElements />
 
       {/* Main Content */}
       <div className="relative z-10">
@@ -610,9 +461,26 @@ export function ProductSecTwo() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
-                Our Product Suite
-              </h2>
+              <motion.h2
+                className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 overflow-visible"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+              >
+                {["Our", "Product", "Suite"].map((word, i) => (
+                  <motion.span
+                    key={i}
+                    className="inline-block mr-2 bg-gradient-to-r from-gray-900 via-slate-800 to-gray-900 bg-clip-text text-transparent transition-colors duration-200 ease-out hover:bg-gradient-to-r hover:from-violet-600 hover:via-blue-600 hover:to-cyan-500"
+                    initial={{ opacity: 0, rotateY: 90 }}
+                    whileInView={{ opacity: 1, rotateY: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: i * 0.1 }}
+                    whileHover={{ y: -3, transition: { duration: 0.18 } }}
+                  >
+                    {word}
+                  </motion.span>
+                ))}
+              </motion.h2>
               <p className="text-lg sm:text-xl text-gray-600 px-4">
                 Choose a product as a service to explore its capabilities and components
               </p>
@@ -624,8 +492,8 @@ export function ProductSecTwo() {
                   key={suite.id}
                   suite={suite}
                   index={index}
-                  isSelected={selectedSuite.id === suite.id}
-                  onClick={() => setSelectedSuite(suite)}
+                  isSelected={selectedSuite?.id === suite.id}
+                  onClick={() => handleCardClick(suite)}
                 />
               ))}
             </div>
@@ -636,145 +504,152 @@ export function ProductSecTwo() {
         <section className="pb-20 sm:pb-28 px-4 sm:px-6" ref={detailRef}>
           <div className="max-w-7xl mx-auto">
             <AnimatePresence mode="wait">
-              <motion.div
-                key={selectedSuite.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={
-                  isDetailInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
-                }
-                transition={{ duration: 0.5 }}
-                className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-12 items-start lg:items-center"
-              >
-                {/* Left Content */}
-                <div className="order-2 lg:order-1">
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-                    <div
-                      className={cn(
-                        "w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center text-white flex-shrink-0",
-                        "bg-gradient-to-r",
-                        selectedSuite.color
-                      )}
-                    >
-                      {selectedSuite.icon}
-                    </div>
-                    <h2 className="text-2xl sm:text-3xl font-bold">
-                      {selectedSuite.title}
-                    </h2>
-                  </div>
-
-                  <p className="text-lg sm:text-xl text-gray-600 mb-6 sm:mb-8">
-                    {selectedSuite.description}
-                  </p>
-
-                  <p className="text-base sm:text-lg mb-6 sm:mb-8">
-                    {selectedSuite.detailedDescription}
-                  </p>
-
-                  <div className="mb-6 sm:mb-8">
-                    <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">
-                      Key Features:
-                    </h3>
-                    <FeatureList features={selectedSuite.features} />
-                  </div>
-
-                  <div className="mb-6 sm:mb-8">
-                    <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">
-                      Why Choose {selectedSuite.title}?
-                    </h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                      <div className="flex items-center gap-2 text-gray-700">
-                        <Zap className="w-4 h-4 text-indigo-500 flex-shrink-0" />
-                        <span className="text-sm sm:text-base">Easy Integration</span>
+              {selectedSuite && (
+                <motion.div
+                  key={selectedSuite.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={
+                    isDetailInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+                  }
+                  exit={{ opacity: 0, y: 20 }}
+                  transition={{ duration: 0.5 }}
+                  className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-12 items-start lg:items-center"
+                >
+                  {/* Left Content */}
+                  <div className="order-2 lg:order-1">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+                      <div
+                        className={cn(
+                          "w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center text-white flex-shrink-0",
+                          "bg-gradient-to-r",
+                          selectedSuite.color
+                        )}
+                      >
+                        {selectedSuite.icon}
                       </div>
-                      <div className="flex items-center gap-2 text-gray-700">
-                        <HousePlug className="w-4 h-4 text-indigo-500 flex-shrink-0" />
-                        <span className="text-sm sm:text-base">Runs on local LLMs</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-gray-700">
-                        <Globe className="w-4 h-4 text-indigo-500 flex-shrink-0" />
-                        <span className="text-sm sm:text-base">Quick dashboards</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-gray-700">
-                        <File className="w-4 h-4 text-indigo-500 flex-shrink-0" />
-                        <span className="text-sm sm:text-base">Secure data, stays on your system</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                    <Button
-                      size="lg"
-                      className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white w-full sm:w-auto"
-                    >
-                      View Suite
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      className="border-indigo-500 text-indigo-600 bg-indigo-50 w-full sm:w-auto"
-                    >
-                      Learn More
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Right Content - Carousel Card */}
-                <div className="relative order-1 lg:order-2">
-                  <Card className="p-6 sm:p-8 border-4 border-indigo-200 overflow-hidden">
-                    <Carousel className="w-full">
-                      <CarouselContent>
-                        {selectedSuite.carouselImages.map((image, index) => (
-                          <CarouselItem key={index}>
-                            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg">
-                              <Image
-                              width={100}
-                              height={100}
-                                src={image.url}
-                                alt={image.alt}
-                                className="w-full h-full object-cover"
-                              />
-                              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
-                                <p className="text-white font-semibold text-sm sm:text-base">
-                                  {image.alt}
-                                </p>
-                              </div>
-                            </div>
-                          </CarouselItem>
-                        ))}
-                      </CarouselContent>
-                      <CarouselPrevious className="left-2" />
-                      <CarouselNext className="right-2" />
-                    </Carousel>
-                    
-                    <div className="mt-6">
-                      <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-center">
+                      <h2 className="text-2xl sm:text-3xl font-bold">
                         {selectedSuite.title}
+                      </h2>
+                    </div>
+
+                    <p className="text-lg sm:text-xl text-gray-600 mb-6 sm:mb-8">
+                      {selectedSuite.description}
+                    </p>
+
+                    <p className="text-base sm:text-lg mb-6 sm:mb-8">
+                      {selectedSuite.detailedDescription}
+                    </p>
+
+                    <div className="mb-6 sm:mb-8">
+                      <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">
+                        Key Features:
                       </h3>
+                      <FeatureList features={selectedSuite.features} />
+                    </div>
 
-                      <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 text-center">
-                        Experience the power of{" "}
-                        {selectedSuite.title.toLowerCase()} with our
-                        comprehensive solution.
-                      </p>
-
-                      <div className="grid grid-cols-2 gap-3 sm:gap-4 text-sm">
-                        {selectedSuite.stats.map((stat, index) => (
-                          <div
-                            key={index}
-                            className="p-2 sm:p-3 bg-gray-100 rounded-lg border border-gray-400"
-                          >
-                            <div className="font-semibold text-base sm:text-lg">
-                              {stat.value}
-                            </div>
-                            <div className="text-xs sm:text-sm text-gray-600">{stat.label}</div>
-                          </div>
-                        ))}
+                    <div className="mb-6 sm:mb-8">
+                      <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">
+                        Why Choose {selectedSuite.title}?
+                      </h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                        <div className="flex items-center gap-2 text-gray-700">
+                          <Zap className="w-4 h-4 text-indigo-500 flex-shrink-0" />
+                          <span className="text-sm sm:text-base">Easy Integration</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-gray-700">
+                          <Wifi className="w-4 h-4 text-indigo-500 flex-shrink-0" />
+                          <span className="text-sm sm:text-base">Runs on local LLMs</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-gray-700">
+                          <Globe className="w-4 h-4 text-indigo-500 flex-shrink-0" />
+                          <span className="text-sm sm:text-base">Quick dashboards</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-gray-700">
+                          <File className="w-4 h-4 text-indigo-500 flex-shrink-0" />
+                          <span className="text-sm sm:text-base">Secure data, stays on your system</span>
+                        </div>
                       </div>
                     </div>
-                  </Card>
-                </div>
-              </motion.div>
+
+                    {/* <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                      <Button
+                        size="lg"
+                        className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white w-full sm:w-auto"
+                      >
+                        View Suite
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="lg"
+                        className="border-indigo-500 text-indigo-600 bg-indigo-50 w-full sm:w-auto"
+                      >
+                        Learn More
+                      </Button>
+                    </div> */}
+                  </div>
+
+                  {/* Right Content - Carousel Card */}
+                  <div className="relative order-1 lg:order-2">
+                    <Card className="p-8 sm:p-8 border-2 border-gray-200 overflow-hidden shadow-lg">
+                      <Carousel className="w-full">
+                        <CarouselContent>
+                          {selectedSuite.carouselImages.map((image, index) => (
+                            <CarouselItem key={index}>
+                              <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-gray-100">
+                                <Image
+                                  width={100}
+                                  height={100}
+                                  src={image.url}
+                                  alt={image.alt}
+                                  className="w-full h-full object-cover"
+                                />
+                                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent p-4">
+                                  <p className="text-white font-semibold text-sm sm:text-base">
+                                    {image.alt}
+                                  </p>
+                                </div>
+                              </div>
+                            </CarouselItem>
+                          ))}
+                        </CarouselContent>
+                        <div className="absolute left-2 top-1/2 -translate-y-1/2 z-10">
+                          <CarouselPrevious className="bg-white border-gray-300 hover:bg-gray-100" />
+                        </div>
+                        <div className="absolute right-2 top-1/2 -translate-y-1/2 z-10">
+                          <CarouselNext className="bg-white border-gray-300 hover:bg-gray-100" />
+                        </div>
+                      </Carousel>
+                      
+                      <div className="mt-6 pt-6 border-t border-gray-200">
+                        <h3 className="text-2xl font-bold mb-2">
+                          {selectedSuite.title}
+                        </h3>
+
+                        <p className="text-sm text-gray-600 mb-6">
+                          Experience the power of{" "}
+                          {selectedSuite.title.toLowerCase()} with our
+                          comprehensive solution.
+                        </p>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          {selectedSuite.stats.map((stat, index) => (
+                            <div
+                              key={index}
+                              className="p-3 bg-gray-50 rounded-lg border border-gray-200"
+                            >
+                              <div className="font-bold text-lg">
+                                {stat.value}
+                              </div>
+                              <div className="text-xs text-gray-600">{stat.label}</div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </Card>
+                  </div>
+                </motion.div>
+              )}
             </AnimatePresence>
           </div>
         </section>

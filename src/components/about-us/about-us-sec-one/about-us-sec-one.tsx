@@ -15,7 +15,6 @@ const FeatureCard: React.FC<{
   const cardRef = useRef(null);
   const isInView = useInView(cardRef, { once: true, amount: 0.2 });
 
-  // Generate random squares for grid
   const squares = Array.from({ length: 5 }, () => [
     Math.floor(Math.random() * 4) + 7,
     Math.floor(Math.random() * 6) + 1,
@@ -37,7 +36,6 @@ const FeatureCard: React.FC<{
       }}
       className="group bg-white rounded-xl border border-gray-200 shadow-lg hover:shadow-md relative overflow-hidden transition-all"
     >
-      {/* Grid Pattern Background */}
       <div className="pointer-events-none absolute top-0 left-1/2 -mt-2 -ml-20 h-full w-full [mask-image:linear-gradient(white,transparent)] opacity-60">
         <div className="absolute inset-0 bg-gradient-to-r from-gray-900/15 to-gray-900/5 [mask-image:radial-gradient(farthest-side_at_top,white,transparent)]">
           <svg className="absolute inset-0 h-full w-full mix-blend-overlay" aria-hidden="true">
@@ -93,7 +91,7 @@ export const AboutSectionOne: React.FC<AboutSectionProps> = ({
   specialization = "AI Specialists",
   story = "Equilibrate.AI came into existence when the founders saw the whole world overwhelmed by rapid AI growth and development. Many businesses want to integrate AI into their workflows but are not sure where to start and clueless about the effort. The core principle is to democratise existing tech with the use of AI. Determined to make AI more approachable in business settings, Equilibrate.AI is on the journey to build feature-rich, easy-to-use and cutting edge AI products and solutions. AI is here to make our lives better, so let us embrace it in the right way.",
 }) => {
-  const containerVariants:Variants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -104,7 +102,7 @@ export const AboutSectionOne: React.FC<AboutSectionProps> = ({
     },
   };
 
-  const itemVariants:Variants = {
+  const itemVariants: Variants = {
     hidden: { y: 20, opacity: 0 },
     visible: {
       y: 0,
@@ -116,7 +114,7 @@ export const AboutSectionOne: React.FC<AboutSectionProps> = ({
     },
   };
 
-  const cardVariants:Variants = {
+  const cardVariants: Variants = {
     hidden: { scale: 0.95, opacity: 0 },
     visible: {
       scale: 1,
@@ -147,12 +145,24 @@ export const AboutSectionOne: React.FC<AboutSectionProps> = ({
         >
           <motion.div className="text-center mb-16" variants={itemVariants}>
             <motion.h1
-              className="text-5xl font-bold mb-4 bg-clip-text text-black"
+              className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 overflow-visible"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
             >
-              About {companyName}
+              {`About ${companyName}`.split(" ").map((word, i) => (
+                <motion.span
+                  key={i}
+                  className="inline-block mr-2 bg-gradient-to-r from-gray-900 via-slate-800 to-gray-900 bg-clip-text text-transparent transition-colors duration-200 ease-out hover:bg-gradient-to-r hover:from-violet-600 hover:via-blue-600 hover:to-cyan-500"
+                  initial={{ opacity: 0, rotateY: 90 }}
+                  whileInView={{ opacity: 1, rotateY: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: i * 0.1 }}
+                  whileHover={{ y: -3, transition: { duration: 0.18 } }}
+                >
+                  {word}
+                </motion.span>
+              ))}
             </motion.h1>
             <motion.p
               className="text-xl text-gray-600 mb-6 max-w-2xl mx-auto"
@@ -199,12 +209,24 @@ export const AboutSectionOne: React.FC<AboutSectionProps> = ({
 
           <motion.div className="mb-16" variants={itemVariants}>
             <motion.h2
-              className="text-3xl font-bold mb-8 text-center text-gray-800"
+              className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-8 text-center overflow-visible"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.8 }}
             >
-              Our Story
+              {["Our", "Story"].map((word, i) => (
+                <motion.span
+                  key={i}
+                  className="inline-block mr-2 bg-gradient-to-r from-gray-900 via-slate-800 to-gray-900 bg-clip-text text-transparent transition-colors duration-200 ease-out hover:bg-gradient-to-r hover:from-violet-600 hover:via-blue-600 hover:to-cyan-500"
+                  initial={{ opacity: 0, rotateY: 90 }}
+                  whileInView={{ opacity: 1, rotateY: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: i * 0.1 }}
+                  whileHover={{ y: -3, transition: { duration: 0.18 } }}
+                >
+                  {word}
+                </motion.span>
+              ))}
             </motion.h2>
             <motion.div variants={cardVariants}>
               <Card className="p-8 border-gray-400 bg-transparent-400">
