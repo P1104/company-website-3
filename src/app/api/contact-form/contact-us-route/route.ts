@@ -8,8 +8,8 @@ export async function POST(req: NextRequest) {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_PASS,
+        user: "anish.equilibrate@gmail.com",
+        pass: "ufsmbhlpjcwfmfob",
       },
     });
 
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     // Email to company (styled for HR/corporate)
     const companyMailOptions = {
       from: `"Corporate Contact Form" <${process.env.GMAIL_USER}>`,
-      to: process.env.GMAIL_USER,
+      to: "anish.equilibrate@gmail.com",
       subject: `New Contact Submission from ${name}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
