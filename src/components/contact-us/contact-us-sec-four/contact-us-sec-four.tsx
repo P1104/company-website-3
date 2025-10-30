@@ -113,7 +113,7 @@ export const ContactSecFour = () => {
         >
           <div className="grid grid-cols-2 divide-x divide-gray-200">
             <LinkBox Icon={Mail} href="mailto:anish.navali@equilibrateai.com" label="Email us" />
-            <LinkBox Icon={Github} href="https://github.com" label="Visit GitHub" />
+            <LinkBox Icon={Github} href="https://github.com/Equilibrate-AI" label="Visit GitHub" />
           </div>
           <div className="grid grid-cols-2 divide-x divide-gray-200">
             <LinkBox Icon={Linkedin} href="https://www.linkedin.com/company/equilibrate-ai" label="Visit LinkedIn" />

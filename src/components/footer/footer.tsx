@@ -207,7 +207,7 @@ const isFormValid = (): boolean => {
   };
 
   const socialLinks: SocialLink[] = [
-    { icon: Github, href: "https://github.com", label: "GitHub" },
+    { icon: Github, href: "https://github.com/Equilibrate-AI", label: "GitHub" },
     { icon: XIcon, href: "https://x.com/EquilibrateAI", label: "X (Twitter)" },
     { icon: Linkedin, href: "https://www.linkedin.com/company/equilibrate-ai", label: "LinkedIn" },
     { icon: Instagram, href: "https://www.instagram.com/equilibrate.ai?igsh=ZmtkN2dkMDcwY3kx", label: "Instagram" },
