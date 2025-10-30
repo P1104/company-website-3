@@ -19,7 +19,7 @@ export default function MarioGamePage() {
   const [character] = useState("mario");
   const [difficulty] = useState("normal");
   const [score, setScore] = useState(0);
-  const [ setCoins] = useState(0);
+  const [ , setCoins] = useState(0);
   const [finalScore, setFinalScore] = useState(0);
   const [finalCoins, setFinalCoins] = useState(0);
   const [gameLoaded, setGameLoaded] = useState(false);
